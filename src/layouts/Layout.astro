@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="Delicias Sussu: postres artesanales, regalos y sabores que hacen cada momento especial."
+		/>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Delicias Sussu | Postres artesanales</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style>
+	:root {
+		--bg: #fffaf6;
+		--panel: #ffffff;
+		--panel-soft: #fff1eb;
+		--primary: #d96d5d;
+		--primary-dark: #b65345;
+		--secondary: #f7cb82;
+		--text: #2e221f;
+		--muted: #6b534f;
+		--line: rgba(46, 34, 31, 0.08);
+		--shadow: 0 20px 60px rgba(126, 61, 45, 0.12);
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		margin: 0;
+		font-family: Inter, 'Segoe UI', sans-serif;
+		background: linear-gradient(180deg, #fffaf6 0%, #fff8f3 100%);
+		color: var(--text);
+	}
+
+	a {
+		text-decoration: none;
+	}
+</style>
