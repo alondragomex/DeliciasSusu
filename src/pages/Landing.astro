@@ -1,0 +1,564 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="page-shell">
+		<header class="topbar">
+			<div class="brand-wrap">
+				<div class="brand-mark">D</div>
+				<span>Delicias Susu</span>
+			</div>
+
+			<nav class="nav" aria-label="Navegación principal">
+				<a href="#inicio">Inicio</a>
+				<a href="#beneficios">Beneficios</a>
+				<a href="#productos">Productos</a>
+				<a href="#opiniones">Opiniones</a>
+			</nav>
+
+			<a class="btn btn-primary" href="/Login">Iniciar sesión</a>
+		</header>
+
+		<section class="hero" id="inicio">
+			<div class="hero-copy">
+				<p class="eyebrow">Postres artesanales para compartir</p>
+				<h1>Endulza cada momento con sabores que recuerdan a casa.</h1>
+				<p class="lead">
+					En Delicias Susu preparamos pasteles, cupcakes, tartas y regalos irresistibles para
+					celebraciones, desayunos especiales y momentos dulces del día a día.
+				</p>
+
+				<div class="actions">
+					<a class="btn btn-primary" href="#productos">Ver sabores</a>
+					<a class="btn btn-secondary" href="#contacto">Pedir ahora</a>
+				</div>
+
+				<ul class="stats" aria-label="Estadísticas de la marca">
+					<li><strong>1.200+</strong><span>pedidos felices</span></li>
+					<li><strong>4.9/5</strong><span>valoración media</span></li>
+					<li><strong>48h</strong><span>para entrega</span></li>
+				</ul>
+			</div>
+
+			<div class="hero-visual" aria-label="Vista destacada de productos">
+				<div class="highlight-card main-card">
+					<span class="badge">Más vendido</span>
+					<div class="dessert-emoji">🍰</div>
+					<h3>Pastel de chocolate</h3>
+					<p>Textura suave, ganache artesanal y toque de cacao intenso.</p>
+					<div class="price-row">
+						<span class="price">$500.00MXN</span>
+						<span class="mini-note">Entrega en 24h</span>
+					</div>
+				</div>
+				<div class="mini-card mini-one">
+					🍪 Cupcakes
+				</div>
+				<div class="mini-card mini-two">
+					🍓 Tarta fresa
+				</div>
+			</div>
+		</section>
+
+		<section class="features" id="beneficios">
+			<div class="section-heading">
+				<p class="eyebrow">¿Por qué elegirnos?</p>
+				<h2>Todo está pensado para que disfrutes cada bocado.</h2>
+			</div>
+
+			<div class="feature-grid">
+				<article class="feature-card">
+					<h3>Ingredientes premium</h3>
+					<p>Usamos mantequilla, frutas frescas y chocolates de calidad para un sabor auténtico.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Pedidos personalizados</h3>
+					<p>Diseñamos regalos para cumpleaños, eventos y momentos especiales con estilo propio.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Entrega rápida</h3>
+					<p>Recibes tus delicias en tiempo récord, listas para sorprender a quien más quieres.</p>
+				</article>
+			</div>
+		</section>
+
+		<section class="products" id="productos">
+			<div class="section-heading">
+				<p class="eyebrow">Nuestros favoritos</p>
+				<h2>Sabores que conquistan</h2>
+			</div>
+
+			<div class="product-grid">
+				<article class="product-card">
+					<h3>Chocolate intenso</h3>
+					<p>Pastel húmedo con capas de cacao y cobertura suave.</p>
+					<span>Ideal para celebraciones.</span>
+				</article>
+				<article class="product-card">
+					<h3>Mango tropical</h3>
+					<p>Tarta fresca y ligera con crema batida y fruta natural.</p>
+					<span>Perfecto para verano.</span>
+				</article>
+				<article class="product-card">
+					<h3>Cupcakes surtidos</h3>
+					<p>Variedad de sabores con decorados a mano y personalización.</p>
+					<span>Para reuniones y regalos.</span>
+				</article>
+			</div>
+		</section>
+
+		<section class="process" id="opiniones">
+			<div class="section-heading">
+				<p class="eyebrow">Cómo funciona</p>
+				<h2>Compra fácil, dulce y sin complicaciones.</h2>
+			</div>
+
+			<div class="steps">
+				<div class="step">
+					<span>01</span>
+					<h3>Elige tu producto</h3>
+					<p>Explora nuestros sabores y encuentra el perfecto para tu ocasión.</p>
+				</div>
+				<div class="step">
+					<span>02</span>
+					<h3>Personalízalo</h3>
+					<p>Añade mensajes, colores y detalles para que se sienta único.</p>
+				</div>
+				<div class="step">
+					<span>03</span>
+					<h3>Recibe tu pedido</h3>
+					<p>Te lo entregamos listísimo para compartir y disfrutar en familia.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="testimonial">
+			<div class="testimonial-box">
+				<p class="quote">“Pedimos un pastel para la fiesta de mi hermana y quedó espectacular. ¡Todo el mundo pidió la receta!”</p>
+				<div class="person">
+					<strong>María R.</strong>
+					<span>Cliente feliz</span>
+				</div>
+			</div>
+		</section>
+
+		<section class="cta" id="contacto">
+			<div>
+				<p class="eyebrow">Haz tu pedido</p>
+				<h2>Tu próxima celebración necesita un dulce especial.</h2>
+			</div>
+			<a class="btn btn-primary" href="/Login">Haz tu pedido</a>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<p>© 2026 Delicias Susu — Postres artesanales con amor.</p>
+	</footer>
+</Layout>
+
+<style>
+	.page-shell {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 24px 20px 60px;
+	}
+
+	.topbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 14px 0 20px;
+		gap: 20px;
+	}
+
+	.brand-wrap {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		font-weight: 800;
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark {
+		display: grid;
+		place-items: center;
+		width: 42px;
+		height: 42px;
+		background: linear-gradient(135deg, var(--primary) 0%, #eea368 100%);
+		color: white;
+		border-radius: 14px;
+		box-shadow: var(--shadow);
+	}
+
+	.nav {
+		display: flex;
+		align-items: center;
+		gap: 26px;
+		font-size: 0.96rem;
+		color: var(--muted);
+	}
+
+	.nav a {
+		color: var(--muted);
+		transition: color 0.2s ease;
+	}
+
+	.nav a:hover {
+		color: var(--primary-dark);
+	}
+
+	.hero {
+		display: grid;
+		grid-template-columns: 1.1fr 0.9fr;
+		align-items: center;
+		gap: 40px;
+		padding: 42px 0 30px;
+	}
+
+	.eyebrow {
+		margin: 0 0 12px;
+		font-size: 0.82rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--primary-dark);
+	}
+
+	.hero-copy h1,
+	.section-heading h2,
+	.cta h2 {
+		margin: 0;
+		line-height: 1.05;
+		letter-spacing: -0.04em;
+	}
+
+	.hero-copy h1 {
+		font-size: clamp(2.6rem, 5vw, 5rem);
+		max-width: 620px;
+	}
+
+	.lead {
+		max-width: 560px;
+		margin-top: 18px;
+		font-size: 1.08rem;
+		line-height: 1.7;
+		color: var(--muted);
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+		margin-top: 28px;
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 14px 22px;
+		border-radius: 999px;
+		font-weight: 700;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.btn:hover {
+		transform: translateY(-1px);
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--primary) 0%, #f08d69 100%);
+		color: white;
+		box-shadow: 0 16px 32px rgba(217, 109, 93, 0.25);
+	}
+
+	.btn-secondary {
+		background: #fff;
+		color: var(--text);
+		border: 1px solid var(--line);
+	}
+
+	.stats {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		padding: 0;
+		margin: 34px 0 0;
+	}
+
+	.stats li {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		min-width: 120px;
+	}
+
+	.stats strong {
+		font-size: 1.6rem;
+	}
+
+	.stats span {
+		font-size: 0.9rem;
+		color: var(--muted);
+	}
+
+	.hero-visual {
+		position: relative;
+		display: grid;
+		place-items: center;
+		min-height: 480px;
+	}
+
+	.highlight-card {
+		position: relative;
+		background: linear-gradient(180deg, #fffaf7 0%, #fff1ea 100%);
+		border: 1px solid rgba(217, 109, 93, 0.12);
+		border-radius: 28px;
+		box-shadow: var(--shadow);
+	}
+
+	.main-card {
+		padding: 26px 26px 22px;
+		width: min(100%, 420px);
+		z-index: 2;
+	}
+
+	.badge {
+		display: inline-flex;
+		padding: 7px 10px;
+		border-radius: 999px;
+		background: rgba(217, 109, 93, 0.12);
+		color: var(--primary-dark);
+		font-size: 0.75rem;
+		font-weight: 800;
+	}
+
+	.dessert-emoji {
+		font-size: 5rem;
+		margin: 20px 0 8px;
+	}
+
+	.main-card h3 {
+		margin: 0;
+		font-size: 1.8rem;
+	}
+
+	.main-card p {
+		margin: 10px 0 0;
+		line-height: 1.7;
+		color: var(--muted);
+	}
+
+	.price-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 20px;
+		padding-top: 14px;
+		border-top: 1px solid rgba(46, 34, 31, 0.08);
+	}
+
+	.price {
+		font-size: 1.5rem;
+		font-weight: 800;
+	}
+
+	.mini-note {
+		color: var(--muted);
+		font-size: 0.8rem;
+	}
+
+	.mini-card {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 16px 18px;
+		font-weight: 700;
+		background: white;
+		border: 1px solid var(--line);
+		border-radius: 18px;
+		box-shadow: var(--shadow);
+	}
+
+	.mini-one {
+		top: 12%;
+		right: 8%;
+	}
+
+	.mini-two {
+		bottom: 8%;
+		left: 6%;
+	}
+
+	.features,
+	.products,
+	.process {
+		padding-top: 70px;
+	}
+
+	.section-heading {
+		margin-bottom: 30px;
+	}
+
+	.section-heading h2 {
+		font-size: clamp(2rem, 4vw, 3rem);
+	}
+
+	.feature-grid,
+	.product-grid,
+	.steps {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 22px;
+	}
+
+	.feature-card,
+	.product-card,
+	.step,
+	.testimonial-box,
+	.cta {
+		background: rgba(255, 255, 255, 0.8);
+		border: 1px solid var(--line);
+		border-radius: 24px;
+		box-shadow: 0 12px 30px rgba(101, 62, 55, 0.04);
+	}
+
+	.feature-card,
+	.product-card,
+	.step {
+		padding: 24px;
+	}
+
+	.icon,
+	.product-emoji {
+		display: grid;
+		place-items: center;
+		width: 62px;
+		height: 62px;
+		border-radius: 18px;
+		background: var(--panel-soft);
+		font-size: 1.8rem;
+	}
+
+	.feature-card h3,
+	.product-card h3,
+	.step h3 {
+		margin: 18px 0 10px;
+	}
+
+	.feature-card p,
+	.product-card p,
+	.step p,
+	.person span {
+		margin: 0;
+		line-height: 1.7;
+		color: var(--muted);
+	}
+
+	.product-card span {
+		display: inline-block;
+		margin-top: 14px;
+		font-weight: 700;
+		color: var(--primary-dark);
+	}
+
+	.steps {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.step span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 56px;
+		height: 56px;
+		background: linear-gradient(135deg, rgba(217, 109, 93, 0.15), rgba(247, 203, 130, 0.35));
+		border-radius: 16px;
+		font-weight: 800;
+		color: var(--primary-dark);
+	}
+
+	.testimonial {
+		padding-top: 72px;
+	}
+
+	.testimonial-box {
+		padding: 32px 28px;
+		max-width: 760px;
+		margin: 0 auto;
+	}
+
+	.quote {
+		margin: 0;
+		font-size: clamp(1.2rem, 2vw, 1.8rem);
+		line-height: 1.5;
+		font-weight: 600;
+	}
+
+	.person {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		margin-top: 16px;
+	}
+
+	.cta {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+		padding: 28px 30px;
+		margin-top: 72px;
+		background: linear-gradient(135deg, rgba(255, 245, 240, 0.96), rgba(255, 251, 245, 0.9));
+	}
+
+	.footer {
+		padding: 28px 20px 50px;
+		text-align: center;
+		color: var(--muted);
+	}
+
+	@media (max-width: 860px) {
+		.topbar,
+		.hero,
+		.cta,
+		.feature-grid,
+		.product-grid,
+		.steps {
+			grid-template-columns: 1fr;
+			flex-direction: column;
+		}
+
+		.topbar {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			text-align: center;
+		}
+
+		.nav {
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+
+		.hero {
+			display: block;
+		}
+
+		.hero-copy h1 {
+			max-width: 100%;
+		}
+
+		.hero-visual {
+			margin-top: 30px;
+		}
+
+		.cta {
+			display: flex;
+			align-items: flex-start;
+		}
+	}
+</style>
