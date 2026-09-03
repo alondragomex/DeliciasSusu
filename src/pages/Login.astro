@@ -34,13 +34,13 @@ import Layout from '../layouts/Layout.astro';
 
                 <form class="login-form">
                     <label for="email">Correo electrónico</label>
-                    <input id="email" name="email" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" required />
+                    <input id="email" name="email" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" />
 
                     <div class="password-label">
                         <label for="password">Contraseña</label>
                         <a href="#recuperar">¿La olvidaste?</a>
                     </div>
-                    <input id="password" name="password" type="password" placeholder="Escribe tu contraseña" autocomplete="current-password" required />
+                    <input id="password" name="password" type="password" placeholder="Escribe tu contraseña" autocomplete="current-password" />
 
                     <label class="remember-me" for="remember">
                         <input id="remember" name="remember" type="checkbox" />
@@ -50,10 +50,10 @@ import Layout from '../layouts/Layout.astro';
                     <button class="btn btn-primary" type="submit">Entrar a mi cuenta <span aria-hidden="true">→</span></button>
                 </form>
 
-                <p class="signup-prompt">¿Aún no tienes una cuenta? <a href="#registro">Regístrate aquí</a></p>
+                <p class="signup-prompt">¿Aún no tienes una cuenta? <a href="Registro">Regístrate aquí</a></p>
             </div>
         </section>
-
+        
         <footer class="footer">
             <p>© 2026 Delicias Susu — Postres artesanales con amor.</p>
         </footer>
