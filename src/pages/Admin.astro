@@ -1,0 +1,596 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="admin-shell">
+		<aside class="sidebar" aria-label="Navegación del administrador">
+			<a class="brand-wrap" href="/Landing" aria-label="Volver al inicio de Delicias Susu">
+				<span class="brand-mark">D</span>
+				<span>Delicias Susu</span>
+			</a>
+
+			<div class="profile-card">
+				<div class="avatar">AS</div>
+				<div>
+					<strong>Admin Susu</strong>
+					<span>Panel de control</span>
+				</div>
+			</div>
+
+			<nav class="menu" aria-label="Secciones del panel">
+				<p class="menu-label">Gestión</p>
+				<a class="menu-link active" href="#resumen"><span class="menu-icon">⌂</span>Resumen</a>
+				<a class="menu-link" href="#pedidos"><span class="menu-icon">▣</span>Pedidos <b>12</b></a>
+				<a class="menu-link" href="#productos"><span class="menu-icon">✦</span>Productos</a>
+				<a class="menu-link" href="#clientes"><span class="menu-icon">♧</span>Clientes</a>
+				<p class="menu-label secondary-label">Cuenta</p>
+				<a class="menu-link" href="#configuracion"><span class="menu-icon">⚙</span>Configuración</a>
+			</nav>
+
+			<a class="logout" href="/Login"><span>↪</span> Cerrar sesión</a>
+		</aside>
+
+		<section class="dashboard" id="resumen">
+			<header class="dashboard-header">
+				<div>
+					<p class="eyebrow">Martes, 18 de junio de 2026</p>
+					<h1>Buenos días, Susu <span aria-hidden="true">✦</span></h1>
+					<p class="header-note">Aquí tienes lo importante para que todo siga saliendo delicioso.</p>
+				</div>
+				<div class="header-actions">
+					<button class="icon-button" type="button" aria-label="Ver notificaciones">♧<i></i></button>
+					<a class="btn btn-primary" href="#nuevo-pedido"><span aria-hidden="true">+</span> Nuevo pedido</a>
+				</div>
+			</header>
+
+			<section class="metrics" aria-label="Resumen del negocio">
+				<article class="metric-card featured">
+					<div class="metric-top"><span>Ventas del mes</span><span class="metric-icon">↗</span></div>
+					<strong>$28,460</strong>
+					<p><span class="positive">+18.4%</span> frente al mes pasado</p>
+				</article>
+				<article class="metric-card">
+					<div class="metric-top"><span>Pedidos nuevos</span><span class="metric-icon soft">▣</span></div>
+					<strong>48</strong>
+					<p><span class="positive">+12.5%</span> esta semana</p>
+				</article>
+				<article class="metric-card">
+					<div class="metric-top"><span>Por entregar hoy</span><span class="metric-icon yellow">◷</span></div>
+					<strong>12</strong>
+					<p><span class="attention">Requieren atención</span></p>
+				</article>
+			</section>
+
+			<section class="content-grid">
+				<div class="panel orders-panel" id="pedidos">
+					<div class="panel-heading">
+						<div><p class="eyebrow">Actividad reciente</p><h2>Pedidos de hoy</h2></div>
+						<a class="text-link" href="#todos-los-pedidos">Ver todos <span>→</span></a>
+					</div>
+					<div class="filter-row" role="group" aria-label="Filtrar pedidos">
+						<button class="filter active" type="button" data-filter="Todos">Todos <span>4</span></button>
+						<button class="filter" type="button" data-filter="Pendiente">Pendientes <span>1</span></button>
+						<button class="filter" type="button" data-filter="Listo">Listos <span>2</span></button>
+					</div>
+					<div class="table-wrap">
+						<table>
+							<thead><tr><th>Pedido</th><th>Cliente</th><th>Entrega</th><th>Total</th><th>Estado</th></tr></thead>
+							<tbody>
+								<tr data-status="Pendiente"><td><strong>#DS-1048</strong><small>Pastel personalizado</small></td><td>María Fernández</td><td>Hoy, 12:30</td><td><strong>$850</strong></td><td><span class="status pending">Pendiente</span></td></tr>
+								<tr data-status="Listo"><td><strong>#DS-1047</strong><small>Caja de cupcakes</small></td><td>Diego Ramírez</td><td>Hoy, 13:00</td><td><strong>$420</strong></td><td><span class="status ready">Listo</span></td></tr>
+								<tr data-status="En preparación"><td><strong>#DS-1046</strong><small>Tarta de frutos rojos</small></td><td>Camila Torres</td><td>Hoy, 14:15</td><td><strong>$690</strong></td><td><span class="status preparing">En preparación</span></td></tr>
+								<tr data-status="Listo"><td><strong>#DS-1045</strong><small>Brownies surtidos</small></td><td>Jorge Castillo</td><td>Hoy, 15:00</td><td><strong>$320</strong></td><td><span class="status ready">Listo</span></td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<aside class="panel stock-panel" id="productos">
+					<div class="panel-heading"><div><p class="eyebrow">Catálogo</p><h2>Más vendidos</h2></div><a class="round-link" href="#agregar-producto" aria-label="Agregar producto">+</a></div>
+					<div class="product-list">
+						<div class="product-item"><span class="product-art cake">🍰</span><div><strong>Pastel de chocolate</strong><small>24 vendidos</small></div><b>$500</b></div>
+						<div class="product-item"><span class="product-art cupcake">🧁</span><div><strong>Cupcakes surtidos</strong><small>18 vendidos</small></div><b>$280</b></div>
+						<div class="product-item"><span class="product-art tart">🍓</span><div><strong>Tarta de fresa</strong><small>15 vendidos</small></div><b>$420</b></div>
+					</div>
+					<a class="inventory-link" href="#inventario">Administrar catálogo <span>→</span></a>
+				</aside>
+			</section>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	const filters = document.querySelectorAll<HTMLButtonElement>('.filter');
+	const rows = document.querySelectorAll<HTMLTableRowElement>('tbody tr');
+	filters.forEach((filter) => {
+		filter.addEventListener('click', () => {
+			filters.forEach((item) => item.classList.remove('active'));
+			filter.classList.add('active');
+			const selected = filter.dataset.filter;
+			rows.forEach((row) => {
+				row.hidden = selected !== 'Todos' && row.dataset.status !== selected;
+			});
+		});
+	});
+</script>
+
+<style>
+	/* Layout */
+	.admin-shell {
+		display: grid;
+		grid-template-columns: 250px minmax(0, 1fr);
+		min-height: 100vh;
+	}
+
+	.sidebar {
+		display: flex;
+		flex-direction: column;
+		padding: 30px 18px 24px;
+		background: #fff;
+		border-right: 1px solid var(--line);
+	}
+
+	.brand-wrap {
+		display: inline-flex;
+		align-items: center;
+		gap: 11px;
+		padding: 0 12px;
+		color: var(--text);
+		font-weight: 800;
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark {
+		display: grid;
+		place-items: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 13px;
+		background: linear-gradient(135deg, var(--primary), #eea368);
+		color: #fff;
+		box-shadow: var(--shadow);
+	}
+
+	/* Sidebar */
+	.profile-card {
+		display: flex;
+		align-items: center;
+		gap: 11px;
+		margin: 46px 8px 36px;
+		padding: 12px;
+		border-radius: 16px;
+		background: var(--panel-soft);
+	}
+
+	.avatar {
+		display: grid;
+		place-items: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 12px;
+		background: #f7cb82;
+		color: var(--text);
+		font-size: 0.74rem;
+		font-weight: 800;
+	}
+
+	.profile-card div:last-child {
+		display: grid;
+		gap: 3px;
+	}
+
+	.profile-card strong {
+		font-size: 0.88rem;
+	}
+
+	.profile-card span {
+		color: var(--muted);
+		font-size: 0.73rem;
+	}
+
+	.menu {
+		display: grid;
+		gap: 5px;
+	}
+
+	.menu-label {
+		margin: 0 12px 9px;
+		color: #a89089;
+		font-size: 0.68rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.secondary-label {
+		margin-top: 28px;
+	}
+
+	.menu-link {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px;
+		border-radius: 12px;
+		color: var(--muted);
+		font-size: 0.9rem;
+		font-weight: 700;
+	}
+
+	.menu-link:hover,
+	.menu-link.active {
+		background: var(--panel-soft);
+		color: var(--primary-dark);
+	}
+
+	.menu-link b {
+		margin-left: auto;
+		padding: 3px 7px;
+		border-radius: 999px;
+		background: #f7cb82;
+		color: var(--text);
+		font-size: 0.68rem;
+	}
+
+	.menu-icon {
+		width: 18px;
+		color: var(--primary);
+		font-size: 1.1rem;
+		text-align: center;
+	}
+
+	.logout {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+		margin-top: auto;
+		padding: 12px;
+		color: var(--muted);
+		font-size: 0.86rem;
+		font-weight: 700;
+	}
+
+	.logout span {
+		color: var(--primary);
+		font-size: 1.2rem;
+	}
+
+	/* Dashboard header */
+	.dashboard {
+		width: 100%;
+		max-width: 1400px;
+		margin: 0 auto;
+		padding: 46px clamp(24px, 5vw, 70px) 60px;
+	}
+
+	.dashboard-header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 24px;
+	}
+
+	.eyebrow {
+		margin: 0 0 10px;
+		color: var(--primary-dark);
+		font-size: 0.72rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	h1,
+	h2 {
+		margin: 0;
+		line-height: 1.06;
+		letter-spacing: -0.04em;
+	}
+
+	h1 {
+		font-size: clamp(2rem, 4vw, 3.2rem);
+	}
+
+	h1 span {
+		color: var(--secondary);
+		font-size: 0.7em;
+	}
+
+	h2 {
+		font-size: 1.35rem;
+	}
+
+	.header-note {
+		margin: 12px 0 0;
+		color: var(--muted);
+		font-size: 0.94rem;
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+	}
+
+	.icon-button,
+	.round-link {
+		position: relative;
+		display: grid;
+		place-items: center;
+		width: 42px;
+		height: 42px;
+		border: 1px solid var(--line);
+		border-radius: 50%;
+		background: #fff;
+		color: var(--primary-dark);
+		font: inherit;
+		font-size: 1.1rem;
+		cursor: pointer;
+	}
+
+	.icon-button i {
+		position: absolute;
+		top: 8px;
+		right: 9px;
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--primary);
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		padding: 13px 18px;
+		border-radius: 999px;
+		font-size: 0.85rem;
+		font-weight: 800;
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--primary), #f08d69);
+		color: #fff;
+		box-shadow: 0 12px 25px rgba(217, 109, 93, 0.2);
+	}
+
+	/* Metrics */
+	.metrics {
+		display: grid;
+		grid-template-columns: 1.25fr 1fr 1fr;
+		gap: 16px;
+		margin: 42px 0 28px;
+	}
+
+	.metric-card {
+		padding: 22px 24px;
+		border: 1px solid var(--line);
+		border-radius: 18px;
+		background: rgba(255, 255, 255, 0.76);
+		box-shadow: 0 12px 32px rgba(126, 61, 45, 0.05);
+	}
+
+	.metric-card.featured {
+		background: linear-gradient(135deg, #e98770, #d96d5d);
+		color: #fff;
+	}
+
+	.metric-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		color: var(--muted);
+		font-size: 0.78rem;
+		font-weight: 700;
+	}
+
+	.featured .metric-top {
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.metric-icon {
+		color: var(--primary-dark);
+		font-size: 1.15rem;
+	}
+
+	.metric-icon.soft { color: #d39f60; }
+	.metric-icon.yellow { color: #c88b3a; }
+
+	.metric-card > strong {
+		display: block;
+		margin: 15px 0 5px;
+		font-size: 2rem;
+		letter-spacing: -0.04em;
+	}
+
+	.metric-card p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.75rem;
+	}
+
+	.featured p { color: rgba(255, 255, 255, 0.85); }
+	.positive { color: #3a9272; font-weight: 800; }
+	.featured .positive { color: #fff3c8; }
+	.attention { color: var(--primary-dark); font-weight: 800; }
+
+	/* Orders and catalog */
+	.content-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.85fr);
+		gap: 20px;
+	}
+
+	.panel {
+		padding: 26px;
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		background: rgba(255, 255, 255, 0.8);
+		box-shadow: 0 14px 40px rgba(126, 61, 45, 0.05);
+	}
+
+	.panel-heading {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 15px;
+	}
+
+	.text-link,
+	.inventory-link {
+		color: var(--primary-dark);
+		font-size: 0.78rem;
+		font-weight: 800;
+	}
+
+	.filter-row {
+		display: flex;
+		gap: 8px;
+		margin: 25px 0 13px;
+	}
+
+	.filter {
+		padding: 7px 11px;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: var(--muted);
+		font: inherit;
+		font-size: 0.73rem;
+		cursor: pointer;
+	}
+
+	.filter span {
+		margin-left: 3px;
+		color: #a89089;
+	}
+
+	.filter.active {
+		background: var(--panel-soft);
+		color: var(--primary-dark);
+		font-weight: 800;
+	}
+
+	.table-wrap { overflow-x: auto; }
+
+	table {
+		width: 100%;
+		min-width: 610px;
+		border-collapse: collapse;
+		text-align: left;
+	}
+
+	th {
+		padding: 10px;
+		color: #a89089;
+		font-size: 0.66rem;
+		font-weight: 800;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	td {
+		padding: 15px 10px;
+		border-top: 1px solid var(--line);
+		color: var(--muted);
+		font-size: 0.78rem;
+		white-space: nowrap;
+	}
+
+	td:first-child { color: var(--text); }
+	td strong { display: block; color: var(--text); font-size: 0.8rem; }
+	td small { display: block; margin-top: 4px; color: #a89089; font-size: 0.68rem; }
+
+	.status {
+		display: inline-flex;
+		padding: 5px 8px;
+		border-radius: 999px;
+		font-size: 0.65rem;
+		font-weight: 800;
+	}
+
+	.pending { background: #fff0cf; color: #a86b13; }
+	.ready { background: #e4f4e9; color: #47815b; }
+	.preparing { background: #fce4de; color: #b65345; }
+
+	.stock-panel {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.product-list {
+		display: grid;
+		gap: 18px;
+		margin: 28px 0;
+	}
+
+	.product-item {
+		display: grid;
+		grid-template-columns: 44px 1fr auto;
+		align-items: center;
+		gap: 11px;
+	}
+
+	.product-art {
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		border-radius: 14px;
+		font-size: 1.35rem;
+	}
+
+	.cake { background: #fce4de; }
+	.cupcake { background: #fff0cf; }
+	.tart { background: #e6f1e8; }
+	.product-item div { display: grid; gap: 4px; }
+	.product-item strong { font-size: 0.8rem; }
+	.product-item small { color: var(--muted); font-size: 0.7rem; }
+	.product-item b { color: var(--primary-dark); font-size: 0.76rem; }
+
+	.inventory-link {
+		margin-top: auto;
+		padding-top: 17px;
+		border-top: 1px solid var(--line);
+	}
+
+	.round-link {
+		width: 30px;
+		height: 30px;
+		color: var(--primary-dark);
+		font-size: 1.25rem;
+	}
+
+	/* Responsive layout */
+	@media (max-width: 900px) {
+		.admin-shell { grid-template-columns: 1fr; }
+		.sidebar {
+			padding: 16px 18px;
+			border-right: 0;
+			border-bottom: 1px solid var(--line);
+		}
+		.profile-card { display: none; }
+		.menu {
+			display: flex;
+			overflow-x: auto;
+			margin: 18px 0 4px;
+		}
+		.menu-label,
+		.secondary-label,
+		.logout { display: none; }
+		.menu-link { white-space: nowrap; }
+		.dashboard { padding-top: 34px; }
+	}
+
+	@media (max-width: 620px) {
+		.dashboard { padding-inline: 18px; }
+		.dashboard-header { display: block; }
+		.header-actions { margin-top: 24px; }
+		.metrics,
+		.content-grid { grid-template-columns: 1fr; }
+		.metrics { margin-top: 30px; }
+		.panel { padding: 20px 16px; }
+		.filter-row { overflow-x: auto; }
+	}
+</style>
