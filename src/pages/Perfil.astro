@@ -1,0 +1,213 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="profile-shell">
+		<header class="topbar">
+			<a class="brand-wrap" href="/Landing" aria-label="Volver al inicio de Delicias Susu">
+				<span class="brand-mark">D</span>
+				<span>Delicias Susu</span>
+			</a>
+			<a class="back-link" href="/Landing">Volver al inicio <span aria-hidden="true">→</span></a>
+		</header>
+
+		<section class="profile-content" aria-labelledby="profile-title">
+			<div class="profile-avatar">DS</div>
+			<p class="eyebrow">Mi cuenta</p>
+			<h1 id="profile-title">Bienvenido a tu perfil</h1>
+			<div class="user-info">
+				<strong>Susu Delicias</strong>
+				<span>susu@ejemplo.com</span>
+			</div>
+			<p class="profile-message">Tu inicio de sesion fue exitoso. Desde aqui podras consultar tus pedidos y guardar tus productos favoritos.</p>
+			<div class="profile-sections">
+				<section class="profile-section">
+					<h2>Mis datos</h2>
+					<p>Consulta y administra tu informacion personal.</p>
+				</section>
+				<section class="profile-section">
+					<h2>Mis compras</h2>
+					<p>Proximamente podras consultar aqui tus pedidos.</p>
+				</section>
+			</div>
+			<div class="profile-actions">
+				<a class="btn btn-primary" href="/Landing#productos">Ver productos</a>
+				<a class="btn btn-secondary" href="/Login">Cerrar sesion</a>
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<style>
+	.profile-shell {
+		max-width: 1200px;
+		min-height: 100vh;
+		margin: 0 auto;
+		padding: 24px 20px 36px;
+	}
+
+	.topbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.brand-wrap {
+		display: inline-flex;
+		align-items: center;
+		gap: 12px;
+		font-weight: 800;
+		color: var(--text);
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark,
+	.profile-avatar {
+		display: grid;
+		place-items: center;
+		background: linear-gradient(135deg, var(--primary) 0%, #eea368 100%);
+		color: white;
+		box-shadow: var(--shadow);
+	}
+
+	.brand-mark {
+		width: 42px;
+		height: 42px;
+		border-radius: 14px;
+	}
+
+	.back-link {
+		color: var(--primary-dark);
+		font-weight: 700;
+	}
+
+	.back-link span {
+		margin-left: 5px;
+	}
+
+	.profile-content {
+		max-width: 620px;
+		margin: 15vh auto 0;
+		padding: 48px;
+		text-align: center;
+		border: 1px solid rgba(217, 109, 93, 0.12);
+		border-radius: 28px;
+		background: rgba(255, 255, 255, 0.82);
+		box-shadow: var(--shadow);
+	}
+
+	.profile-avatar {
+		width: 76px;
+		height: 76px;
+		margin: 0 auto 24px;
+		border-radius: 24px;
+		font-size: 1.25rem;
+		font-weight: 800;
+	}
+
+	.eyebrow {
+		margin: 0 0 12px;
+		color: var(--primary-dark);
+		font-size: 0.82rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.profile-content h1 {
+		margin: 0;
+		font-size: clamp(2rem, 5vw, 3.5rem);
+		line-height: 1.05;
+		letter-spacing: -0.04em;
+	}
+
+	.profile-message {
+		max-width: 480px;
+		margin: 18px auto 0;
+		color: var(--muted);
+		line-height: 1.7;
+	}
+
+	.user-info {
+		display: grid;
+		gap: 4px;
+		margin-top: 18px;
+	}
+
+	.user-info span,
+	.profile-section p {
+		color: var(--muted);
+	}
+
+	.profile-sections {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 14px;
+		margin-top: 28px;
+		text-align: left;
+	}
+
+	.profile-section {
+		padding: 18px;
+		border: 1px solid var(--line);
+		border-radius: 16px;
+		background: #fffaf7;
+	}
+
+	.profile-section h2 {
+		margin: 0;
+		font-size: 1rem;
+	}
+
+	.profile-section p {
+		margin: 8px 0 0;
+		font-size: 0.88rem;
+		line-height: 1.5;
+	}
+
+	.profile-actions {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-top: 28px;
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 14px 22px;
+		border-radius: 999px;
+		font-weight: 700;
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--primary) 0%, #f08d69 100%);
+		color: white;
+	}
+
+	.btn-secondary {
+		border: 1px solid var(--line);
+		background: white;
+		color: var(--text);
+	}
+
+	@media (max-width: 600px) {
+		.topbar {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.profile-content {
+			margin-top: 8vh;
+			padding: 32px 22px;
+		}
+
+		.profile-sections {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
