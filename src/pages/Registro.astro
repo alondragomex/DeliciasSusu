@@ -32,7 +32,7 @@ import Layout from '../layouts/Layout.astro';
 					<p>Regístrate en Delicias Susu y empieza a disfrutar.</p>
 				</div>
 
-				<form class="register-form">
+				<form class="register-form" id="register-form">
 					<label for="name">Nombre completo</label>
 					<input id="name" name="name" type="text" placeholder="Escribe tu nombre" autocomplete="name" required />
 
@@ -53,8 +53,11 @@ import Layout from '../layouts/Layout.astro';
 						<span>Acepto los términos y condiciones.</span>
 					</label>
 
-					<button class="btn btn-primary" type="submit">Crear mi cuenta <span aria-hidden="true">→</span></button>
+					<button class="btn btn-primary" type="submit">Registrarme <span aria-hidden="true">→</span></button>
 				</form>
+				<p class="system-notification" id="system-notification" role="status" aria-live="polite" hidden>
+					Registro exitoso (simulado)
+				</p>
 
 				<p class="login-prompt">¿Ya tienes una cuenta? <a href="/Login">Inicia sesión aquí</a></p>
 			</div>
@@ -65,6 +68,21 @@ import Layout from '../layouts/Layout.astro';
 		</footer>
 	</main>
 </Layout>
+
+<script>
+	const registerForm = document.querySelector<HTMLFormElement>('#register-form');
+	const systemNotification = document.querySelector<HTMLElement>('#system-notification');
+
+	registerForm?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		if (systemNotification) {
+			systemNotification.hidden = false;
+		}
+		window.setTimeout(() => {
+			window.location.href = '/Login';
+		}, 1500);
+	});
+</script>
 
 <style>
 	.register-shell {
@@ -267,6 +285,18 @@ import Layout from '../layouts/Layout.astro';
 		margin: 24px 0 0;
 		color: var(--muted);
 		font-size: 0.9rem;
+		text-align: center;
+	}
+
+	.system-notification {
+		margin: 16px 0 0;
+		padding: 12px 16px;
+		border: 1px solid rgba(67, 137, 91, 0.22);
+		border-radius: 12px;
+		background: #edf8ef;
+		color: #28643b;
+		font-size: 0.9rem;
+		font-weight: 700;
 		text-align: center;
 	}
 
