@@ -62,6 +62,26 @@ const products = [
 		badge: 'Nuevo',
 		availability: 'Entrega en 24 h',
 	},
+	{
+		name: 'Pastel de vainilla',
+		description: 'Bizcocho de vainilla con relleno cremoso y decoración artesanal.',
+		price: '$550',
+		category: 'Pasteles',
+		icon: '🎂',
+		className: 'vanilla',
+		badge: 'Nuevo',
+		availability: 'Entrega en 24 h',
+	},
+	{
+		name: 'Galletas decoradas',
+		description: 'Galletas de mantequilla decoradas a mano para regalar o celebrar.',
+		price: '$280',
+		category: 'Regalos',
+		icon: '🍪',
+		className: 'cookies',
+		badge: 'Oferta',
+		availability: 'Entrega en 12 h',
+	},
 ];
 
 const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
@@ -104,7 +124,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		</section>
 
 		<section class="catalog-results" aria-labelledby="results-title">
-			<div class="results-heading"><div><p class="eyebrow">Nuestro catálogo</p><h2 id="results-title">Dulces para cada momento</h2></div><span id="result-count">6 productos</span></div>
+			<div class="results-heading"><div><p class="eyebrow">Nuestro catálogo</p><h2 id="results-title">Dulces para cada momento</h2></div><span id="result-count">{products.length} productos</span></div>
 			<div class="product-grid" id="product-grid">
 				{products.map((product) => (
 					<article class="product-card" data-category={product.category} data-name={product.name.toLowerCase()}>
