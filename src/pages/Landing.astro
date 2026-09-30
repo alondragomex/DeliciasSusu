@@ -33,7 +33,7 @@ import Layout from '../layouts/Layout.astro';
 
 				<div class="actions">
 					<a class="btn btn-primary" href="#productos">Ver productos</a>
-					<a class="btn btn-secondary" href="Login">Pedir ahora</a>
+					<a class="btn btn-secondary" href="/Login">Pedir ahora</a>
 				</div>
 
 				<ul class="stats" aria-label="Estadísticas de la marca">
@@ -93,7 +93,7 @@ import Layout from '../layouts/Layout.astro';
 
 			<div class="product-grid">
 				<article class="product-card">
-					<img src="choco.jpg" alt="pastel chocolate">
+					<img src="/choco.jpg" alt="pastel chocolate">
 					<h3>Chocolate intenso</h3>
 					<p>Pastel húmedo con capas de cacao y cobertura suave.</p>
 					<span>Ideal para celebraciones.</span>
@@ -108,7 +108,7 @@ import Layout from '../layouts/Layout.astro';
 					<a class="product-order-btn" href="/Login">Hacer pedido</a>
 				</article>
 				<article class="product-card">
-					<img src="mango.jpg" alt="tarta de mango">
+					<img src="/mango.jpg" alt="tarta de mango">
 					<h3>Mango tropical</h3>
 					<p>Tarta fresca y ligera con crema batida y fruta natural.</p>
 					<span>Perfecto para verano.</span>
@@ -123,7 +123,7 @@ import Layout from '../layouts/Layout.astro';
 					<a class="product-order-btn" href="/Login">Hacer pedido</a>
 				</article>
 				<article class="product-card">
-					<img src="cup.jpg" alt="cupcakes surtidos">
+					<img src="/cup.jpg" alt="cupcakes surtidos">
 					<h3>Cupcakes surtidos</h3>
 					<p>Variedad de sabores con decorados a mano y personalización.</p>
 					<span>Para reuniones y regalos.</span>
@@ -137,6 +137,9 @@ import Layout from '../layouts/Layout.astro';
 					</details>
 					<a class="product-order-btn" href="/Login">Hacer pedido</a>
 				</article>
+			</div>
+			<div class="products-action">
+				<a class="btn btn-primary" href="/Catalogo">Ver más</a>
 			</div>
 		</section>
 
@@ -587,6 +590,12 @@ import Layout from '../layouts/Layout.astro';
 	.product-order-btn:hover {
 		background: var(--primary-dark);
 		transform: translateY(-1px);
+	}
+
+	.products-action {
+		display: flex;
+		justify-content: center;
+		margin-top: 30px;
 	}
 
 	.steps {
