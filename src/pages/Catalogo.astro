@@ -161,6 +161,16 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			</article>
 		</div>
 
+		<div class="cart-modal" id="cart-modal" hidden>
+			<div class="modal-backdrop" data-close-cart></div>
+			<aside class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+				<div class="cart-heading"><div><p class="eyebrow">Tu selección</p><h2 id="cart-title">Carrito</h2></div><button class="close-modal" type="button" aria-label="Cerrar carrito" data-close-cart>×</button></div>
+				<div class="cart-items" id="cart-items"></div>
+				<div class="cart-empty" id="cart-empty">Todavía no agregas productos.</div>
+				<div class="cart-summary"><div><span>Subtotal</span><strong id="cart-subtotal">$0 MXN</strong></div><div><span>Total</span><strong id="cart-total-price">$0 MXN</strong></div><button class="checkout-button" id="checkout-button" type="button">Ir a pagar <span aria-hidden="true">→</span></button><p class="checkout-feedback" id="checkout-feedback" role="status" aria-live="polite"></p></div>
+			</aside>
+		</div>
+
 		<section class="catalog-footer">
 			<div><p class="eyebrow">¿Tienes algo especial en mente?</p><h2>Personalizamos tu pedido.</h2><p>Cuéntanos tu idea y la convertimos en un detalle hecho especialmente para ti.</p></div>
 			<a class="btn btn-primary" href="/Landing#contacto">Hablar con nosotros <span aria-hidden="true">→</span></a>
@@ -172,7 +182,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 
 <script>
 	const search = document.querySelector<HTMLInputElement>('#product-search');
-	const filterButtons = document.querySelectorAll<HTMLButtonElement>('[data-category]');
+	const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filters [data-category]');
 	const productCards = document.querySelectorAll<HTMLElement>('.product-card');
 	const emptyState = document.querySelector<HTMLElement>('#empty-state');
 	const resultCount = document.querySelector<HTMLElement>('#result-count');
@@ -189,13 +199,51 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	const cartButton = document.querySelector<HTMLButtonElement>('#cart-button');
 	const relatedGrid = document.querySelector<HTMLElement>('#related-grid');
 	const cartFeedback = document.querySelector<HTMLElement>('#cart-feedback');
+	const cartModal = document.querySelector<HTMLElement>('#cart-modal');
+	const cartItemsElement = document.querySelector<HTMLElement>('#cart-items');
+	const cartEmpty = document.querySelector<HTMLElement>('#cart-empty');
+	const cartSubtotal = document.querySelector<HTMLElement>('#cart-subtotal');
+	const cartTotalPrice = document.querySelector<HTMLElement>('#cart-total-price');
+	const checkoutFeedback = document.querySelector<HTMLElement>('#checkout-feedback');
+	type CartItem = { name: string; price: number; icon: string; quantity: number };
 	let selectedCategory = 'Todos';
 	let selectedProduct: HTMLElement | null = null;
-	let cartTotal = Number(localStorage.getItem('delicias-cart-total') ?? 0);
+	let cartItems: Record<string, CartItem> = JSON.parse(localStorage.getItem('delicias-cart-items') ?? '{}');
+	let cartTotal = 0;
+
+	const formatPrice = (price: number) => `$${price.toLocaleString('es-MX')} MXN`;
+	const saveCart = () => localStorage.setItem('delicias-cart-items', JSON.stringify(cartItems));
 
 	const updateCartCount = () => {
+		cartTotal = Object.values(cartItems).reduce((total, item) => total + item.quantity, 0);
 		if (cartCount) cartCount.textContent = String(cartTotal);
 		cartButton?.setAttribute('aria-label', `Carrito, ${cartTotal} productos`);
+		const subtotal = Object.values(cartItems).reduce((total, item) => total + item.price * item.quantity, 0);
+		if (cartSubtotal) cartSubtotal.textContent = formatPrice(subtotal);
+		if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(subtotal);
+		if (cartEmpty) cartEmpty.hidden = cartTotal !== 0;
+	};
+
+	const renderCart = () => {
+		if (!cartItemsElement) return;
+		cartItemsElement.innerHTML = '';
+		Object.values(cartItems).forEach((item) => {
+			const row = document.createElement('div');
+			row.className = 'cart-item';
+			row.innerHTML = `<span class="cart-item-icon">${item.icon}</span><div class="cart-item-info"><strong>${item.name}</strong><small>${formatPrice(item.price)}</small><div class="cart-item-actions"><button type="button" data-cart-action="decrease" data-product="${item.name}" aria-label="Disminuir ${item.name}">−</button><span>${item.quantity}</span><button type="button" data-cart-action="increase" data-product="${item.name}" aria-label="Aumentar ${item.name}">+</button><button class="remove-item" type="button" data-cart-action="remove" data-product="${item.name}">Eliminar</button></div></div><strong>${formatPrice(item.price * item.quantity)}</strong>`;
+			cartItemsElement.append(row);
+		});
+		cartItemsElement.querySelectorAll<HTMLButtonElement>('[data-cart-action]').forEach((button) => button.addEventListener('click', () => {
+			const name = button.dataset.product;
+			const action = button.dataset.cartAction;
+			if (!name || !cartItems[name]) return;
+			if (action === 'increase') cartItems[name].quantity = Math.min(20, cartItems[name].quantity + 1);
+			if (action === 'decrease') cartItems[name].quantity -= 1;
+			if (action === 'remove' || cartItems[name].quantity <= 0) delete cartItems[name];
+			saveCart();
+			renderCart();
+		}));
+		updateCartCount();
 	};
 
 	const openDetail = (card: HTMLElement) => {
@@ -259,13 +307,19 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	document.querySelector<HTMLButtonElement>('#increase-quantity')?.addEventListener('click', () => { if (quantity) quantity.value = String(Math.min(20, Number(quantity.value) + 1)); });
 	document.querySelector<HTMLButtonElement>('#add-cart')?.addEventListener('click', () => {
 		if (!selectedProduct || !quantity) return;
-		cartTotal += Math.max(1, Number(quantity.value));
-		localStorage.setItem('delicias-cart-total', String(cartTotal));
-		updateCartCount();
+		const name = selectedProduct.dataset.product ?? '';
+		const amount = Math.max(1, Math.min(20, Number(quantity.value)));
+		const price = Number((selectedProduct.dataset.price ?? '$0').replace(/[^\d.]/g, ''));
+		cartItems[name] = cartItems[name] ?? { name, price, icon: selectedProduct.dataset.icon ?? '', quantity: 0 };
+		cartItems[name].quantity = Math.min(20, cartItems[name].quantity + amount);
+		saveCart();
+		renderCart();
 		if (cartFeedback) cartFeedback.textContent = 'Producto agregado al carrito.';
 	});
-	cartButton?.addEventListener('click', () => { if (cartFeedback) cartFeedback.textContent = `${cartTotal} ${cartTotal === 1 ? 'producto' : 'productos'} en tu carrito.`; });
-	updateCartCount();
+	cartButton?.addEventListener('click', () => { renderCart(); if (cartModal) cartModal.hidden = false; });
+	document.querySelectorAll<HTMLElement>('[data-close-cart]').forEach((element) => element.addEventListener('click', () => { if (cartModal) cartModal.hidden = true; }));
+	document.querySelector<HTMLButtonElement>('#checkout-button')?.addEventListener('click', () => { if (checkoutFeedback) checkoutFeedback.textContent = 'Checkout próximamente. Este será el siguiente paso.'; });
+	renderCart();
 </script>
 
 <style>
@@ -348,6 +402,26 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.related-item span { font-size: 1.7rem; }
 	.related-item strong { font-size: 0.75rem; }
 	.related-item small { color: var(--muted); }
+	.cart-modal[hidden] { display: none; }
+	.cart-modal { position: fixed; inset: 0; z-index: 11; }
+	.cart-panel { position: absolute; top: 0; right: 0; display: flex; flex-direction: column; width: min(460px, 100%); height: 100%; padding: 30px 24px; overflow: auto; background: var(--panel); box-shadow: -12px 0 35px rgba(126, 61, 45, 0.14); }
+	.cart-heading { display: flex; align-items: start; justify-content: space-between; }
+	.cart-heading h2 { margin: 0; font-size: 2rem; }
+	.cart-items { display: grid; gap: 12px; margin: 28px 0; }
+	.cart-empty { margin: 32px 0; color: var(--muted); text-align: center; }
+	.cart-item { display: grid; grid-template-columns: 48px 1fr auto; align-items: start; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+	.cart-item-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--panel-soft); font-size: 1.7rem; }
+	.cart-item-info { display: grid; gap: 3px; }
+	.cart-item-info small { color: var(--muted); }
+	.cart-item-actions { display: flex; align-items: center; gap: 7px; margin-top: 5px; }
+	.cart-item-actions button { min-width: 25px; height: 25px; border: 1px solid var(--line); border-radius: 6px; background: white; color: var(--primary-dark); cursor: pointer; }
+	.cart-item-actions .remove-item { width: auto; padding: 0 7px; border: 0; color: var(--primary-dark); font-size: 0.72rem; }
+	.cart-item > strong { font-size: 0.85rem; }
+	.cart-summary { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); }
+	.cart-summary > div { display: flex; justify-content: space-between; gap: 16px; margin: 8px 0; }
+	.cart-summary span { color: var(--muted); }
+	.checkout-button { width: 100%; margin-top: 15px; padding: 13px; border: 0; border-radius: 11px; background: var(--primary); color: white; cursor: pointer; font: inherit; font-weight: 800; }
+	.checkout-feedback { min-height: 20px; margin: 10px 0 0; color: var(--primary-dark); font-size: 0.85rem; font-weight: 700; text-align: center; }
 	.empty-state { margin: 28px 0 0; color: var(--muted); text-align: center; }
 	.catalog-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 38px 42px; border-radius: 24px; background: linear-gradient(120deg, #fff0e9, #fff9e7); }
 	.catalog-footer h2 { margin: 0; font-size: clamp(1.7rem, 3vw, 2.4rem); letter-spacing: -0.04em; }

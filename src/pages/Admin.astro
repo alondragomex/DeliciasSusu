@@ -21,8 +21,9 @@ import Layout from '../layouts/Layout.astro';
 			<nav class="menu" aria-label="Secciones del panel">
 				<p class="menu-label">Gestión</p>
 				<a class="menu-link active" href="#resumen"><span class="menu-icon">⌂</span>Resumen</a>
-				<a class="menu-link" href="#pedidos"><span class="menu-icon">▣</span>Pedidos <b>12</b></a>
 				<a class="menu-link" href="#productos"><span class="menu-icon">✦</span>Productos</a>
+				<a class="menu-link" href="#pedidos"><span class="menu-icon">▣</span>Pedidos <b>5</b></a>
+				<a class="menu-link" href="#promociones"><span class="menu-icon">%</span>Promociones</a>
 				<a class="menu-link" href="#clientes"><span class="menu-icon">♧</span>Clientes</a>
 				<p class="menu-label secondary-label">Cuenta</p>
 				<a class="menu-link" href="#configuracion"><span class="menu-icon">⚙</span>Configuración</a>
@@ -51,14 +52,14 @@ import Layout from '../layouts/Layout.astro';
 					<p><span class="positive">+18.4%</span> frente al mes pasado</p>
 				</article>
 				<article class="metric-card">
-					<div class="metric-top"><span>Pedidos nuevos</span><span class="metric-icon soft">▣</span></div>
-					<strong>48</strong>
-					<p><span class="positive">+12.5%</span> esta semana</p>
+					<div class="metric-top"><span>Productos</span><span class="metric-icon soft">✦</span></div>
+					<strong>12</strong>
+					<p><span class="positive">+2</span> este mes</p>
 				</article>
 				<article class="metric-card">
-					<div class="metric-top"><span>Por entregar hoy</span><span class="metric-icon yellow">◷</span></div>
-					<strong>12</strong>
-					<p><span class="attention">Requieren atención</span></p>
+					<div class="metric-top"><span>Pedidos</span><span class="metric-icon yellow">▣</span></div>
+					<strong>5</strong>
+					<p><span class="attention">2 requieren atención</span></p>
 				</article>
 			</section>
 
@@ -96,13 +97,106 @@ import Layout from '../layouts/Layout.astro';
 					<a class="inventory-link" href="#inventario">Administrar catálogo <span>→</span></a>
 				</aside>
 			</section>
+
+			<section class="panel product-management" id="inventario" aria-labelledby="inventory-title">
+				<div class="panel-heading"><div><p class="eyebrow">Inventario</p><h2 id="inventory-title">Gestión de productos</h2></div><button class="btn btn-primary add-product-button" id="add-product" type="button"><span aria-hidden="true">+</span> Agregar producto</button></div>
+				<div class="table-wrap product-table-wrap">
+					<table class="product-table">
+						<thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+						<tbody id="product-table-body">
+							<tr data-product-row data-name="Pastel de chocolate" data-category="Pasteles" data-price="500"><td><strong>Pastel de chocolate</strong><small>24 vendidos</small></td><td>Pasteles</td><td><strong>$500</strong></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Cupcakes surtidos" data-category="Cupcakes" data-price="280"><td><strong>Cupcakes surtidos</strong><small>18 vendidos</small></td><td>Cupcakes</td><td><strong>$280</strong></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Tarta de fresa" data-category="Tartas" data-price="420"><td><strong>Tarta de fresa</strong><small>15 vendidos</small></td><td>Tartas</td><td><strong>$420</strong></td><td><span class="status pending">Pocas unidades</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<div class="product-form-modal" id="product-form-modal" hidden>
+				<div class="form-backdrop" data-close-product-form></div>
+				<form class="product-form" id="product-form">
+					<div class="form-heading"><div><p class="eyebrow">Catálogo</p><h2 id="product-form-title">Agregar producto</h2></div><button class="close-form" type="button" aria-label="Cerrar formulario" data-close-product-form>×</button></div>
+					<label>Nombre del producto<input id="product-name" required /></label>
+					<label>Categoría<select id="product-category"><option>Pasteles</option><option>Tartas</option><option>Cupcakes</option><option>Regalos</option></select></label>
+					<label>Precio<input id="product-price" type="number" min="1" required /></label>
+					<div class="form-actions"><button class="btn form-cancel" type="button" data-close-product-form>Cancelar</button><button class="btn btn-primary" type="submit">Guardar producto</button></div>
+				</form>
+			</div>
+
+			<section class="panel promotions-panel" id="promociones" aria-labelledby="promotions-title">
+				<div class="panel-heading"><div><p class="eyebrow">Ventas especiales</p><h2 id="promotions-title">Promociones activas</h2></div><a class="round-link" href="#nueva-promocion" aria-label="Agregar promoción">+</a></div>
+				<div class="promotion-list">
+					<div class="promotion-item"><span class="promotion-icon">%</span><div><strong>15% en cajas para regalar</strong><small>Vigente hasta el 30 de junio</small></div><span class="promotion-status">Activa</span></div>
+					<div class="promotion-item"><span class="promotion-icon yellow">✦</span><div><strong>Envío gratis en pedidos mayores a $800</strong><small>Aplicada automáticamente</small></div><span class="promotion-status">Activa</span></div>
+				</div>
+			</section>
 		</section>
 	</main>
 </Layout>
 
 <script>
 	const filters = document.querySelectorAll<HTMLButtonElement>('.filter');
-	const rows = document.querySelectorAll<HTMLTableRowElement>('tbody tr');
+	const rows = document.querySelectorAll<HTMLTableRowElement>('#pedidos tbody tr');
+	const productFormModal = document.querySelector<HTMLElement>('#product-form-modal');
+	const productForm = document.querySelector<HTMLFormElement>('#product-form');
+	const productFormTitle = document.querySelector<HTMLElement>('#product-form-title');
+	const productName = document.querySelector<HTMLInputElement>('#product-name');
+	const productCategory = document.querySelector<HTMLSelectElement>('#product-category');
+	const productPrice = document.querySelector<HTMLInputElement>('#product-price');
+	const productTableBody = document.querySelector<HTMLElement>('#product-table-body');
+	let editingProduct: HTMLTableRowElement | null = null;
+
+	const openProductForm = (row?: HTMLTableRowElement) => {
+		editingProduct = row ?? null;
+		if (productFormTitle) productFormTitle.textContent = row ? 'Editar producto' : 'Agregar producto';
+		if (productName) productName.value = row?.dataset.name ?? '';
+		if (productCategory) productCategory.value = row?.dataset.category ?? 'Pasteles';
+		if (productPrice) productPrice.value = row?.dataset.price ?? '';
+		if (productFormModal) productFormModal.hidden = false;
+	};
+
+	const closeProductForm = () => {
+		if (productFormModal) productFormModal.hidden = true;
+		editingProduct = null;
+	};
+
+	const connectProductActions = (row: HTMLTableRowElement) => {
+		row.querySelector<HTMLButtonElement>('.edit-product')?.addEventListener('click', () => openProductForm(row));
+		row.querySelector<HTMLButtonElement>('.delete-product')?.addEventListener('click', () => {
+			if (window.confirm(`¿Seguro que deseas eliminar "${row.dataset.name}"?`)) row.remove();
+		});
+	};
+
+	document.querySelector<HTMLButtonElement>('#add-product')?.addEventListener('click', () => openProductForm());
+	document.querySelectorAll<HTMLElement>('[data-close-product-form]').forEach((element) => element.addEventListener('click', closeProductForm));
+	document.querySelectorAll<HTMLTableRowElement>('[data-product-row]').forEach(connectProductActions);
+	productForm?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		const name = productName?.value.trim() ?? '';
+		const category = productCategory?.value ?? 'Pasteles';
+		const price = productPrice?.value ?? '0';
+		if (!name || !productTableBody) return;
+		if (editingProduct) {
+			editingProduct.dataset.name = name;
+			editingProduct.dataset.category = category;
+			editingProduct.dataset.price = price;
+			const cells = editingProduct.querySelectorAll('td');
+			if (cells[0]) cells[0].querySelector('strong')!.textContent = name;
+			if (cells[1]) cells[1].textContent = category;
+			if (cells[2]) cells[2].querySelector('strong')!.textContent = `$${price}`;
+		} else {
+			const row = document.createElement('tr');
+			row.dataset.productRow = '';
+			row.dataset.name = name;
+			row.dataset.category = category;
+			row.dataset.price = price;
+			row.innerHTML = `<td><strong>${name}</strong><small>Nuevo producto</small></td><td>${category}</td><td><strong>$${price}</strong></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td>`;
+			productTableBody.append(row);
+			connectProductActions(row);
+		}
+		closeProductForm();
+	});
+
 	filters.forEach((filter) => {
 		filter.addEventListener('click', () => {
 			filters.forEach((item) => item.classList.remove('active'));
@@ -561,6 +655,35 @@ import Layout from '../layouts/Layout.astro';
 		color: var(--primary-dark);
 		font-size: 1.25rem;
 	}
+
+	.promotions-panel { margin-top: 20px; }
+	.promotion-list { display: grid; gap: 12px; margin-top: 22px; }
+	.promotion-item { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid var(--line); }
+	.promotion-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: var(--panel-soft); color: var(--primary-dark); font-size: 1.2rem; font-weight: 800; }
+	.promotion-icon.yellow { background: #fff0cf; color: #a86b13; }
+	.promotion-item div { display: grid; gap: 4px; }
+	.promotion-item strong { font-size: 0.82rem; }
+	.promotion-item small { color: var(--muted); font-size: 0.72rem; }
+	.promotion-status { padding: 5px 8px; border-radius: 999px; background: #e4f4e9; color: #47815b; font-size: 0.65rem; font-weight: 800; }
+	.product-management { margin-top: 20px; }
+	.add-product-button { border: 0; cursor: pointer; }
+	.product-table-wrap { margin-top: 20px; }
+	.product-table { min-width: 760px; }
+	.product-actions { display: flex; gap: 6px; }
+	.table-action { padding: 6px 8px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--primary-dark); cursor: pointer; font: inherit; font-size: 0.7rem; font-weight: 800; }
+	.table-action:hover { background: var(--panel-soft); }
+	.delete-product { color: #a86b13; }
+	.product-form-modal[hidden] { display: none; }
+	.product-form-modal { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 20px; }
+	.form-backdrop { position: absolute; inset: 0; background: rgba(46, 34, 31, 0.45); }
+	.product-form { position: relative; display: grid; gap: 16px; width: min(440px, 100%); padding: 28px; border-radius: 20px; background: var(--panel); box-shadow: var(--shadow); }
+	.form-heading { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+	.form-heading h2 { font-size: 1.5rem; }
+	.close-form { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 1.6rem; }
+	.product-form label { display: grid; gap: 6px; color: var(--muted); font-size: 0.78rem; font-weight: 800; }
+	.product-form input, .product-form select { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--text); font: inherit; }
+	.form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+	.form-cancel { border: 1px solid var(--line); background: #fff; color: var(--muted); cursor: pointer; }
 
 	/* Responsive layout */
 	@media (max-width: 900px) {
