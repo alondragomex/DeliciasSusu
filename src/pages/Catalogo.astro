@@ -102,6 +102,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			</nav>
 
 			<a class="login-link" href="/Login">Iniciar sesión <span aria-hidden="true">→</span></a>
+			<button class="cart-button" id="cart-button" type="button" aria-label="Carrito, 0 productos">🛒 <span id="cart-count">0</span></button>
 		</header>
 
 		<section class="catalog-intro" aria-labelledby="catalog-title">
@@ -127,20 +128,38 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			<div class="results-heading"><div><p class="eyebrow">Nuestro catálogo</p><h2 id="results-title">Dulces para cada momento</h2></div><span id="result-count">{products.length} productos</span></div>
 			<div class="product-grid" id="product-grid">
 				{products.map((product) => (
-					<article class="product-card" data-category={product.category} data-name={product.name.toLowerCase()}>
+					<article class="product-card" data-category={product.category} data-name={product.name.toLowerCase()} data-product={product.name} data-description={product.description} data-price={product.price} data-icon={product.icon} data-class={product.className} data-availability={product.availability}>
 						<div class:list={['product-art', product.className]}><span class="product-badge">{product.badge}</span><span class="dessert-icon" aria-hidden="true">{product.icon}</span></div>
 						<div class="product-info">
 							<div class="category-label">{product.category}</div>
 							<h3>{product.name}</h3>
 							<p>{product.description}</p>
 							<div class="product-footer"><div><strong>{product.price}</strong><small>MXN</small></div><span class="availability">{product.availability}</span></div>
-							<a class="order-button" href="/Login">Hacer pedido <span aria-hidden="true">→</span></a>
+							<button class="order-button" type="button" data-detail-button>Ver detalle <span aria-hidden="true">→</span></button>
 						</div>
 					</article>
 				))}
 			</div>
 			<p class="empty-state" id="empty-state" hidden>No encontramos postres con ese nombre. Prueba con otra búsqueda.</p>
 		</section>
+
+		<div class="product-modal" id="product-modal" hidden>
+			<div class="modal-backdrop" data-close-modal></div>
+			<article class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+				<button class="close-modal" type="button" aria-label="Cerrar detalle" data-close-modal>×</button>
+				<div class="detail-art product-art" id="detail-art"><span class="dessert-icon" id="detail-icon" aria-hidden="true"></span></div>
+				<div class="detail-content">
+					<p class="category-label" id="detail-category"></p>
+					<h2 id="detail-title"></h2>
+					<p class="detail-description" id="detail-description"></p>
+					<p class="availability" id="detail-availability"></p>
+					<div class="detail-purchase"><strong id="detail-price"></strong><span class="quantity-label">Cantidad</span><div class="quantity-control"><button type="button" id="decrease-quantity" aria-label="Disminuir cantidad">−</button><input id="quantity" type="number" min="1" max="20" value="1" aria-label="Cantidad"><button type="button" id="increase-quantity" aria-label="Aumentar cantidad">+</button></div></div>
+					<button class="add-cart-button" id="add-cart" type="button">Agregar al carrito <span aria-hidden="true">+</span></button>
+					<p class="cart-feedback" id="cart-feedback" role="status" aria-live="polite"></p>
+					<section class="related-section" aria-labelledby="related-title"><h3 id="related-title">Productos relacionados</h3><div class="related-grid" id="related-grid"></div></section>
+				</div>
+			</article>
+		</div>
 
 		<section class="catalog-footer">
 			<div><p class="eyebrow">¿Tienes algo especial en mente?</p><h2>Personalizamos tu pedido.</h2><p>Cuéntanos tu idea y la convertimos en un detalle hecho especialmente para ti.</p></div>
@@ -157,7 +176,59 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	const productCards = document.querySelectorAll<HTMLElement>('.product-card');
 	const emptyState = document.querySelector<HTMLElement>('#empty-state');
 	const resultCount = document.querySelector<HTMLElement>('#result-count');
+	const modal = document.querySelector<HTMLElement>('#product-modal');
+	const detailArt = document.querySelector<HTMLElement>('#detail-art');
+	const detailIcon = document.querySelector<HTMLElement>('#detail-icon');
+	const detailCategory = document.querySelector<HTMLElement>('#detail-category');
+	const detailTitle = document.querySelector<HTMLElement>('#detail-title');
+	const detailDescription = document.querySelector<HTMLElement>('#detail-description');
+	const detailAvailability = document.querySelector<HTMLElement>('#detail-availability');
+	const detailPrice = document.querySelector<HTMLElement>('#detail-price');
+	const quantity = document.querySelector<HTMLInputElement>('#quantity');
+	const cartCount = document.querySelector<HTMLElement>('#cart-count');
+	const cartButton = document.querySelector<HTMLButtonElement>('#cart-button');
+	const relatedGrid = document.querySelector<HTMLElement>('#related-grid');
+	const cartFeedback = document.querySelector<HTMLElement>('#cart-feedback');
 	let selectedCategory = 'Todos';
+	let selectedProduct: HTMLElement | null = null;
+	let cartTotal = Number(localStorage.getItem('delicias-cart-total') ?? 0);
+
+	const updateCartCount = () => {
+		if (cartCount) cartCount.textContent = String(cartTotal);
+		cartButton?.setAttribute('aria-label', `Carrito, ${cartTotal} productos`);
+	};
+
+	const openDetail = (card: HTMLElement) => {
+		selectedProduct = card;
+		if (!modal || !detailArt || !detailIcon || !detailTitle || !detailDescription || !detailCategory || !detailPrice || !detailAvailability) return;
+		detailArt.className = `detail-art product-art ${card.dataset.class ?? ''}`;
+		detailIcon.textContent = card.dataset.icon ?? '';
+		detailCategory.textContent = card.dataset.category ?? '';
+		detailTitle.textContent = card.dataset.product ?? '';
+		detailDescription.textContent = card.dataset.description ?? '';
+		detailAvailability.textContent = card.dataset.availability ?? '';
+		detailPrice.textContent = card.dataset.price ?? '';
+		if (quantity) quantity.value = '1';
+		if (cartFeedback) cartFeedback.textContent = '';
+		if (relatedGrid) {
+			relatedGrid.innerHTML = '';
+			[...productCards].filter((item) => item !== card && item.dataset.category === card.dataset.category).slice(0, 3).forEach((related) => {
+				const button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'related-item';
+				button.innerHTML = `<span>${related.dataset.icon ?? ''}</span><strong>${related.dataset.product ?? ''}</strong><small>${related.dataset.price ?? ''}</small>`;
+				button.addEventListener('click', () => openDetail(related));
+				relatedGrid.append(button);
+			});
+		}
+		modal.hidden = false;
+		document.body.style.overflow = 'hidden';
+	};
+
+	const closeDetail = () => {
+		if (modal) modal.hidden = true;
+		document.body.style.overflow = '';
+	};
 
 	const updateProducts = () => {
 		const searchTerm = search?.value.trim().toLowerCase() ?? '';
@@ -182,6 +253,19 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		});
 	});
 	search?.addEventListener('input', updateProducts);
+	productCards.forEach((card) => card.querySelector<HTMLButtonElement>('[data-detail-button]')?.addEventListener('click', () => openDetail(card)));
+	document.querySelectorAll<HTMLElement>('[data-close-modal]').forEach((element) => element.addEventListener('click', closeDetail));
+	document.querySelector<HTMLButtonElement>('#decrease-quantity')?.addEventListener('click', () => { if (quantity) quantity.value = String(Math.max(1, Number(quantity.value) - 1)); });
+	document.querySelector<HTMLButtonElement>('#increase-quantity')?.addEventListener('click', () => { if (quantity) quantity.value = String(Math.min(20, Number(quantity.value) + 1)); });
+	document.querySelector<HTMLButtonElement>('#add-cart')?.addEventListener('click', () => {
+		if (!selectedProduct || !quantity) return;
+		cartTotal += Math.max(1, Number(quantity.value));
+		localStorage.setItem('delicias-cart-total', String(cartTotal));
+		updateCartCount();
+		if (cartFeedback) cartFeedback.textContent = 'Producto agregado al carrito.';
+	});
+	cartButton?.addEventListener('click', () => { if (cartFeedback) cartFeedback.textContent = `${cartTotal} ${cartTotal === 1 ? 'producto' : 'productos'} en tu carrito.`; });
+	updateCartCount();
 </script>
 
 <style>
@@ -193,6 +277,8 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.nav a, .login-link { color: var(--muted); font-weight: 600; }
 	.nav a:hover, .nav a.active, .login-link { color: var(--primary-dark); }
 	.login-link span { margin-left: 5px; }
+	.cart-button { border: 0; background: transparent; color: var(--primary-dark); cursor: pointer; font: inherit; font-weight: 800; white-space: nowrap; }
+	.cart-button span { display: inline-grid; place-items: center; min-width: 23px; height: 23px; margin-left: 3px; border-radius: 50%; background: var(--primary); color: white; font-size: 0.75rem; }
 	.catalog-intro { display: flex; align-items: end; justify-content: space-between; gap: 32px; padding: 58px 0 44px; }
 	.eyebrow { margin: 0 0 11px; color: var(--primary-dark); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 	.catalog-intro h1 { max-width: 650px; margin: 0; font-size: clamp(2.8rem, 6vw, 5.2rem); line-height: 0.98; letter-spacing: -0.05em; }
@@ -236,6 +322,32 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.order-button, .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; }
 	.order-button { width: 100%; padding: 11px 15px; border-radius: 11px; background: var(--panel-soft); color: var(--primary-dark); }
 	.order-button:hover { background: #ffe2d6; }
+	.product-modal[hidden] { display: none; }
+	.product-modal { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 20px; }
+	.modal-backdrop { position: absolute; inset: 0; background: rgba(46, 34, 31, 0.48); }
+	.detail-panel { position: relative; display: grid; grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr); width: min(850px, 100%); max-height: min(720px, 92vh); overflow: auto; border-radius: 22px; background: var(--panel); box-shadow: var(--shadow); }
+	.close-modal { position: absolute; top: 12px; right: 14px; z-index: 1; width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.86); color: var(--text); cursor: pointer; font-size: 1.5rem; }
+	.detail-art { min-height: 100%; border-radius: 0; }
+	.detail-content { padding: 42px 32px 30px; }
+	.detail-content h2 { margin: 7px 0 12px; font-size: clamp(1.8rem, 4vw, 2.7rem); line-height: 1; }
+	.detail-description { margin: 0 0 12px; color: var(--muted); line-height: 1.6; }
+	.detail-purchase { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 16px; margin: 25px 0 16px; }
+	.detail-purchase strong { font-size: 1.7rem; }
+	.quantity-label { grid-column: 1 / -1; color: var(--muted); font-size: 0.8rem; font-weight: 700; }
+	.quantity-control { display: flex; align-items: center; justify-self: end; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+	.quantity-control button { width: 34px; height: 34px; border: 0; background: var(--panel-soft); color: var(--primary-dark); cursor: pointer; font-size: 1.2rem; }
+	.quantity-control input { width: 40px; border: 0; color: var(--text); text-align: center; font: inherit; }
+	.add-cart-button { width: 100%; padding: 13px 16px; border: 0; border-radius: 11px; background: var(--primary); color: white; cursor: pointer; font: inherit; font-weight: 800; }
+	.add-cart-button:hover { background: var(--primary-dark); }
+	.cart-feedback { min-height: 20px; margin: 10px 0 0; color: var(--primary-dark); font-size: 0.85rem; font-weight: 700; }
+	.related-section { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+	.related-section h3 { margin: 0 0 12px; font-size: 1rem; }
+	.related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+	.related-item { display: grid; gap: 4px; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: white; color: var(--text); cursor: pointer; text-align: left; }
+	.related-item:hover { border-color: var(--primary); background: var(--panel-soft); }
+	.related-item span { font-size: 1.7rem; }
+	.related-item strong { font-size: 0.75rem; }
+	.related-item small { color: var(--muted); }
 	.empty-state { margin: 28px 0 0; color: var(--muted); text-align: center; }
 	.catalog-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 38px 42px; border-radius: 24px; background: linear-gradient(120deg, #fff0e9, #fff9e7); }
 	.catalog-footer h2 { margin: 0; font-size: clamp(1.7rem, 3vw, 2.4rem); letter-spacing: -0.04em; }
@@ -245,6 +357,6 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.footer { display: flex; justify-content: space-between; gap: 16px; padding-top: 34px; color: var(--muted); font-size: 0.85rem; }
 	.footer p { margin: 0; }
 	.footer a { color: var(--primary-dark); font-weight: 700; }
-	@media (max-width: 820px) { .nav { display: none; } .catalog-intro, .catalog-controls, .catalog-footer { align-items: stretch; flex-direction: column; } .catalog-note { width: fit-content; } .filters { justify-content: start; } .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+	@media (max-width: 820px) { .nav { display: none; } .catalog-intro, .catalog-controls, .catalog-footer { align-items: stretch; flex-direction: column; } .catalog-note { width: fit-content; } .filters { justify-content: start; } .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .detail-panel { grid-template-columns: 1fr; } .detail-art { min-height: 180px; } }
 	@media (max-width: 560px) { .catalog-shell { padding-inline: 16px; } .topbar { padding-top: 10px; } .login-link { font-size: 0.85rem; } .catalog-intro { padding-top: 40px; } .product-grid { grid-template-columns: 1fr; } .catalog-footer { padding: 28px 24px; } .footer { flex-direction: column; } }
 </style>
