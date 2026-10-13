@@ -17,18 +17,18 @@ import Layout from '../layouts/Layout.astro';
 			<p class="eyebrow">Mi cuenta</p>
 			<h1 id="profile-title">Bienvenido a tu perfil</h1>
 			<div class="user-info">
-				<strong>Susu Delicias</strong>
-				<span>susu@ejemplo.com</span>
+				<strong id="profile-name">Susu Delicias</strong>
+				<span id="profile-email">susu@ejemplo.com</span>
 			</div>
-			<p class="profile-message">Tu inicio de sesion fue exitoso. Desde aqui podras consultar tus pedidos y guardar tus productos favoritos.</p>
+			<p class="profile-message">Tu inicio de sesión fue exitoso. Desde aquí podrás consultar tus pedidos y guardar tus productos favoritos.</p>
 			<div class="profile-sections">
 				<section class="profile-section">
 					<h2>Mis datos</h2>
-					<p>Consulta y administra tu informacion personal.</p>
+					<p>Consulta y administra tu información personal.</p>
 				</section>
-				<section class="profile-section">
+				<section class="profile-section" id="purchase-history">
 					<h2>Mis compras</h2>
-					<p>Proximamente podras consultar aqui tus pedidos.</p>
+					<p id="purchase-history-copy">Mis compras (próximamente).</p>
 				</section>
 			</div>
 			<div class="profile-actions">
@@ -38,6 +38,19 @@ import Layout from '../layouts/Layout.astro';
 		</section>
 	</main>
 </Layout>
+
+<script>
+	const savedUser = JSON.parse(localStorage.getItem('delicias-user') ?? 'null') as { name?: string; email?: string } | null;
+	const lastOrder = JSON.parse(localStorage.getItem('delicias-last-order') ?? 'null') as { orderNumber?: string; total?: string } | null;
+	const profileName = document.querySelector<HTMLElement>('#profile-name');
+	const profileEmail = document.querySelector<HTMLElement>('#profile-email');
+	const purchaseHistoryCopy = document.querySelector<HTMLElement>('#purchase-history-copy');
+	const logoutLink = document.querySelector<HTMLAnchorElement>('.profile-actions .btn-secondary');
+	if (savedUser?.name && profileName) profileName.textContent = savedUser.name;
+	if (savedUser?.email && profileEmail) profileEmail.textContent = savedUser.email;
+	if (lastOrder?.orderNumber && purchaseHistoryCopy) purchaseHistoryCopy.textContent = `${lastOrder.orderNumber} · ${lastOrder.total ?? 'Pedido confirmado'}`;
+	logoutLink?.addEventListener('click', () => localStorage.removeItem('delicias-session'));
+</script>
 
 <style>
 	.profile-shell {

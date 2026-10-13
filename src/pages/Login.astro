@@ -32,7 +32,7 @@ import Layout from '../layouts/Layout.astro';
                     <p>Accede a tu cuenta de Delicias Susu.</p>
                 </div>
 
-                <form class="login-form" id="login-form">
+                <form class="login-form" id="login-form" novalidate>
                     <label for="email">Correo electrónico</label>
                     <input id="email" name="email" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" />
 
@@ -49,6 +49,8 @@ import Layout from '../layouts/Layout.astro';
 
                     <button class="btn btn-primary" type="submit">Entrar <span aria-hidden="true">→</span></button>
                 </form>
+                <p class="login-notification" id="login-notification" role="status" aria-live="polite" hidden></p>
+                <a class="admin-link" href="/Admin">Entrar como administrador <span aria-hidden="true">→</span></a>
 
                 <p class="signup-prompt">¿Aún no tienes una cuenta? <a href="Registro">Regístrate aquí</a></p>
             </div>
@@ -65,6 +67,10 @@ import Layout from '../layouts/Layout.astro';
 
     loginForm?.addEventListener('submit', (event) => {
         event.preventDefault();
+        const formData = new FormData(loginForm);
+        const email = String(formData.get('email') ?? '').trim().toLowerCase();
+        const password = String(formData.get('password') ?? '');
+        localStorage.setItem('delicias-session', JSON.stringify({ email, loggedAt: new Date().toISOString() }));
         window.location.href = '/Perfil';
     });
 </script>
@@ -111,6 +117,15 @@ import Layout from '../layouts/Layout.astro';
     .signup-prompt a {
         color: var(--primary-dark);
         font-weight: 700;
+    }
+
+    .admin-link {
+        display: block;
+        margin-top: 18px;
+        color: var(--primary-dark);
+        font-size: 0.86rem;
+        font-weight: 800;
+        text-align: center;
     }
 
     .back-link span {
