@@ -75,7 +75,14 @@ import Layout from '../layouts/Layout.astro';
 
 	registerForm?.addEventListener('submit', (event) => {
 		event.preventDefault();
+		const formData = new FormData(registerForm);
+		const name = String(formData.get('name') ?? '').trim();
+		const email = String(formData.get('email') ?? '').trim().toLowerCase();
+		const phone = String(formData.get('phone') ?? '').trim();
+		const password = String(formData.get('password') ?? '');
+		localStorage.setItem('delicias-user', JSON.stringify({ name, email, phone, password }));
 		if (systemNotification) {
+			systemNotification.textContent = 'Registro exitoso (simulado)';
 			systemNotification.hidden = false;
 		}
 		window.setTimeout(() => {

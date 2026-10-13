@@ -24,6 +24,7 @@ import Layout from '../layouts/Layout.astro';
 				<a class="menu-link" href="#productos"><span class="menu-icon">✦</span>Productos</a>
 				<a class="menu-link" href="#pedidos"><span class="menu-icon">▣</span>Pedidos <b>5</b></a>
 				<a class="menu-link" href="#promociones"><span class="menu-icon">%</span>Promociones</a>
+				<a class="menu-link" href="#subastas"><span class="menu-icon">↗</span>Subastas</a>
 				<a class="menu-link" href="#clientes"><span class="menu-icon">♧</span>Clientes</a>
 				<p class="menu-label secondary-label">Cuenta</p>
 				<a class="menu-link" href="#configuracion"><span class="menu-icon">⚙</span>Configuración</a>
@@ -41,7 +42,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 				<div class="header-actions">
 					<button class="icon-button" type="button" aria-label="Ver notificaciones">♧<i></i></button>
-					<a class="btn btn-primary" href="#nuevo-pedido"><span aria-hidden="true">+</span> Nuevo pedido</a>
+					<a class="btn btn-primary" href="/Landing"><span aria-hidden="true">←</span> Volver al inicio</a>
 				</div>
 			</header>
 
@@ -88,7 +89,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 
 				<aside class="panel stock-panel" id="productos">
-					<div class="panel-heading"><div><p class="eyebrow">Catálogo</p><h2>Más vendidos</h2></div><a class="round-link" href="#agregar-producto" aria-label="Agregar producto">+</a></div>
+					<div class="panel-heading"><div><p class="eyebrow">Catálogo</p><h2>Más vendidos</h2></div><a class="round-link" href="#inventario" aria-label="Agregar producto">+</a></div>
 					<div class="product-list">
 						<div class="product-item"><span class="product-art cake">🍰</span><div><strong>Pastel de chocolate</strong><small>24 vendidos</small></div><b>$500</b></div>
 						<div class="product-item"><span class="product-art cupcake">🧁</span><div><strong>Cupcakes surtidos</strong><small>18 vendidos</small></div><b>$280</b></div>
@@ -102,11 +103,17 @@ import Layout from '../layouts/Layout.astro';
 				<div class="panel-heading"><div><p class="eyebrow">Inventario</p><h2 id="inventory-title">Gestión de productos</h2></div><button class="btn btn-primary add-product-button" id="add-product" type="button"><span aria-hidden="true">+</span> Agregar producto</button></div>
 				<div class="table-wrap product-table-wrap">
 					<table class="product-table">
-						<thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+						<thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Oferta</th><th>Estado</th><th>Acciones</th></tr></thead>
 						<tbody id="product-table-body">
-							<tr data-product-row data-name="Pastel de chocolate" data-category="Pasteles" data-price="500"><td><strong>Pastel de chocolate</strong><small>24 vendidos</small></td><td>Pasteles</td><td><strong>$500</strong></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
-							<tr data-product-row data-name="Cupcakes surtidos" data-category="Cupcakes" data-price="280"><td><strong>Cupcakes surtidos</strong><small>18 vendidos</small></td><td>Cupcakes</td><td><strong>$280</strong></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
-							<tr data-product-row data-name="Tarta de fresa" data-category="Tartas" data-price="420"><td><strong>Tarta de fresa</strong><small>15 vendidos</small></td><td>Tartas</td><td><strong>$420</strong></td><td><span class="status pending">Pocas unidades</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Pastel de chocolate" data-category="Pasteles" data-price="450" data-offer="true"><td><strong>Pastel de chocolate</strong><small>24 vendidos</small></td><td>Pasteles</td><td><strong>$450</strong></td><td><span class="offer-status active">Oferta activa</span></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Tarta de mango" data-category="Tartas" data-price="700" data-offer="false"><td><strong>Tarta de mango</strong><small>Entrega en 24 h</small></td><td>Tartas</td><td><strong>$700</strong></td><td><span class="offer-status">Sin oferta</span></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Cupcakes surtidos" data-category="Cupcakes" data-price="300" data-offer="false"><td><strong>Cupcakes surtidos</strong><small>18 vendidos</small></td><td>Cupcakes</td><td><strong>$300</strong></td><td><span class="offer-status">Sin oferta</span></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Tarta de frutos rojos" data-category="Tartas" data-price="650" data-offer="false"><td><strong>Tarta de frutos rojos</strong><small>Entrega en 24 h</small></td><td>Tartas</td><td><strong>$650</strong></td><td><span class="offer-status">Sin oferta</span></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Brownies surtidos" data-category="Regalos" data-price="288" data-offer="true"><td><strong>Brownies surtidos</strong><small>Entrega en 12 h</small></td><td>Regalos</td><td><strong>$288</strong></td><td><span class="offer-status active">Oferta activa</span></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Caja desayuno dulce" data-category="Regalos" data-price="450" data-offer="false"><td><strong>Caja desayuno dulce</strong><small>Entrega en 24 h</small></td><td>Regalos</td><td><strong>$450</strong></td><td><span class="offer-status">Sin oferta</span></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Pastel de vainilla" data-category="Pasteles" data-price="550" data-offer="false"><td><strong>Pastel de vainilla</strong><small>Entrega en 24 h</small></td><td>Pasteles</td><td><strong>$550</strong></td><td><span class="offer-status">Sin oferta</span></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Galletas decoradas" data-category="Regalos" data-price="252" data-offer="true"><td><strong>Galletas decoradas</strong><small>Entrega en 12 h</small></td><td>Regalos</td><td><strong>$252</strong></td><td><span class="offer-status active">Oferta activa</span></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
+							<tr data-product-row data-name="Tarta de fresa" data-category="Tartas" data-price="420" data-offer="false"><td><strong>Tarta de fresa</strong><small>15 vendidos</small></td><td>Tartas</td><td><strong>$420</strong></td><td><span class="offer-status">Sin oferta</span></td><td><span class="status pending">Pocas unidades</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td></tr>
 						</tbody>
 					</table>
 				</div>
@@ -114,20 +121,37 @@ import Layout from '../layouts/Layout.astro';
 
 			<div class="product-form-modal" id="product-form-modal" hidden>
 				<div class="form-backdrop" data-close-product-form></div>
-				<form class="product-form" id="product-form">
+				<form class="product-form" id="product-form" novalidate>
 					<div class="form-heading"><div><p class="eyebrow">Catálogo</p><h2 id="product-form-title">Agregar producto</h2></div><button class="close-form" type="button" aria-label="Cerrar formulario" data-close-product-form>×</button></div>
-					<label>Nombre del producto<input id="product-name" required /></label>
+					<label>Nombre del producto<input id="product-name" /></label>
 					<label>Categoría<select id="product-category"><option>Pasteles</option><option>Tartas</option><option>Cupcakes</option><option>Regalos</option></select></label>
-					<label>Precio<input id="product-price" type="number" min="1" required /></label>
+					<label>Precio<input id="product-price" type="text" /></label>
+					<label class="offer-toggle"><input id="product-offer" type="checkbox" /><span>Aplicar oferta del 10%</span></label>
 					<div class="form-actions"><button class="btn form-cancel" type="button" data-close-product-form>Cancelar</button><button class="btn btn-primary" type="submit">Guardar producto</button></div>
 				</form>
 			</div>
+			<p class="admin-notification" id="admin-notification" role="status" aria-live="polite" hidden></p>
 
 			<section class="panel promotions-panel" id="promociones" aria-labelledby="promotions-title">
 				<div class="panel-heading"><div><p class="eyebrow">Ventas especiales</p><h2 id="promotions-title">Promociones activas</h2></div><a class="round-link" href="#nueva-promocion" aria-label="Agregar promoción">+</a></div>
 				<div class="promotion-list">
 					<div class="promotion-item"><span class="promotion-icon">%</span><div><strong>15% en cajas para regalar</strong><small>Vigente hasta el 30 de junio</small></div><span class="promotion-status">Activa</span></div>
 					<div class="promotion-item"><span class="promotion-icon yellow">✦</span><div><strong>Envío gratis en pedidos mayores a $800</strong><small>Aplicada automáticamente</small></div><span class="promotion-status">Activa</span></div>
+				</div>
+			</section>
+
+			<section class="panel auctions-panel" id="subastas" aria-labelledby="auctions-title">
+				<div class="panel-heading"><div><p class="eyebrow">Dinámica especial</p><h2 id="auctions-title">Subastas simuladas</h2></div><span class="auction-live">En vivo</span></div>
+				<div class="auction-card">
+					<div class="auction-art">🎂<span>Edición especial</span></div>
+					<div class="auction-content">
+						<p class="category-label">Pastel de temporada</p>
+						<h3>Pastel de frutos rojos personalizado</h3>
+						<p>Oferta por tiempo limitado para una creación artesanal de tamaño familiar.</p>
+						<div class="auction-stats"><div><small>Oferta actual</small><strong id="auction-price">$850 MXN</strong></div><div><small>Termina en</small><strong>02:18:40</strong></div><div><small>Participantes</small><strong id="auction-bidders">7</strong></div></div>
+						<div class="auction-actions"><label for="auction-bid">Tu oferta<input id="auction-bid" type="number" min="851" step="10" placeholder="$860" /></label><button class="btn btn-primary" id="place-bid" type="button">Ofertar</button></div>
+						<p class="auction-feedback" id="auction-feedback" role="status" aria-live="polite"></p>
+					</div>
 				</div>
 			</section>
 		</section>
@@ -143,8 +167,21 @@ import Layout from '../layouts/Layout.astro';
 	const productName = document.querySelector<HTMLInputElement>('#product-name');
 	const productCategory = document.querySelector<HTMLSelectElement>('#product-category');
 	const productPrice = document.querySelector<HTMLInputElement>('#product-price');
+	const productOffer = document.querySelector<HTMLInputElement>('#product-offer');
 	const productTableBody = document.querySelector<HTMLElement>('#product-table-body');
+	const adminNotification = document.querySelector<HTMLElement>('#admin-notification');
+	const auctionBid = document.querySelector<HTMLInputElement>('#auction-bid');
+	const auctionPrice = document.querySelector<HTMLElement>('#auction-price');
+	const auctionBidders = document.querySelector<HTMLElement>('#auction-bidders');
+	const auctionFeedback = document.querySelector<HTMLElement>('#auction-feedback');
 	let editingProduct: HTMLTableRowElement | null = null;
+
+	const showAdminNotification = (message: string) => {
+		if (!adminNotification) return;
+		adminNotification.textContent = message;
+		adminNotification.hidden = false;
+		window.setTimeout(() => { adminNotification.hidden = true; }, 2800);
+	};
 
 	const openProductForm = (row?: HTMLTableRowElement) => {
 		editingProduct = row ?? null;
@@ -152,6 +189,7 @@ import Layout from '../layouts/Layout.astro';
 		if (productName) productName.value = row?.dataset.name ?? '';
 		if (productCategory) productCategory.value = row?.dataset.category ?? 'Pasteles';
 		if (productPrice) productPrice.value = row?.dataset.price ?? '';
+		if (productOffer) productOffer.checked = row?.dataset.offer === 'true';
 		if (productFormModal) productFormModal.hidden = false;
 	};
 
@@ -163,7 +201,10 @@ import Layout from '../layouts/Layout.astro';
 	const connectProductActions = (row: HTMLTableRowElement) => {
 		row.querySelector<HTMLButtonElement>('.edit-product')?.addEventListener('click', () => openProductForm(row));
 		row.querySelector<HTMLButtonElement>('.delete-product')?.addEventListener('click', () => {
-			if (window.confirm(`¿Seguro que deseas eliminar "${row.dataset.name}"?`)) row.remove();
+			if (window.confirm(`¿Seguro que deseas eliminar "${row.dataset.name}"?`)) {
+				row.remove();
+				showAdminNotification('Producto eliminado correctamente (simulado).');
+			}
 		});
 	};
 
@@ -175,26 +216,45 @@ import Layout from '../layouts/Layout.astro';
 		const name = productName?.value.trim() ?? '';
 		const category = productCategory?.value ?? 'Pasteles';
 		const price = productPrice?.value ?? '0';
-		if (!name || !productTableBody) return;
+		const isOffer = productOffer?.checked ?? false;
+		const wasEditing = Boolean(editingProduct);
+		if (!productTableBody) return;
 		if (editingProduct) {
 			editingProduct.dataset.name = name;
 			editingProduct.dataset.category = category;
 			editingProduct.dataset.price = price;
+			editingProduct.dataset.offer = String(isOffer);
 			const cells = editingProduct.querySelectorAll('td');
 			if (cells[0]) cells[0].querySelector('strong')!.textContent = name;
 			if (cells[1]) cells[1].textContent = category;
 			if (cells[2]) cells[2].querySelector('strong')!.textContent = `$${price}`;
+			if (cells[3]) cells[3].innerHTML = isOffer ? '<span class="offer-status active">Oferta activa</span>' : '<span class="offer-status">Sin oferta</span>';
 		} else {
 			const row = document.createElement('tr');
 			row.dataset.productRow = '';
 			row.dataset.name = name;
 			row.dataset.category = category;
 			row.dataset.price = price;
-			row.innerHTML = `<td><strong>${name}</strong><small>Nuevo producto</small></td><td>${category}</td><td><strong>$${price}</strong></td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td>`;
+			row.dataset.offer = String(isOffer);
+			row.innerHTML = `<td><strong>${name}</strong><small>Nuevo producto</small></td><td>${category}</td><td><strong>$${price}</strong></td><td>${isOffer ? '<span class="offer-status active">Oferta activa</span>' : '<span class="offer-status">Sin oferta</span>'}</td><td><span class="status ready">Disponible</span></td><td><div class="product-actions"><button class="table-action edit-product" type="button">Editar</button><button class="table-action delete-product" type="button">Eliminar</button></div></td>`;
 			productTableBody.append(row);
 			connectProductActions(row);
 		}
 		closeProductForm();
+		showAdminNotification(wasEditing ? 'Producto actualizado correctamente (simulado).' : 'Producto agregado correctamente (simulado).');
+	});
+
+	document.querySelector<HTMLButtonElement>('#place-bid')?.addEventListener('click', () => {
+		const bid = Number(auctionBid?.value ?? 0);
+		const currentPrice = Number((auctionPrice?.textContent ?? '0').replace(/[^\d]/g, ''));
+		if (!bid || bid <= currentPrice) {
+			if (auctionFeedback) auctionFeedback.textContent = `Ingresa una oferta mayor a $${currentPrice} MXN.`;
+			return;
+		}
+		if (auctionPrice) auctionPrice.textContent = `$${bid.toLocaleString('es-MX')} MXN`;
+		if (auctionBidders) auctionBidders.textContent = String(Number(auctionBidders.textContent ?? 0) + 1);
+		if (auctionFeedback) auctionFeedback.textContent = 'Oferta registrada correctamente (simulado).';
+		if (auctionBid) auctionBid.value = '';
 	});
 
 	filters.forEach((filter) => {
@@ -607,6 +667,8 @@ import Layout from '../layouts/Layout.astro';
 	.pending { background: #fff0cf; color: #a86b13; }
 	.ready { background: #e4f4e9; color: #47815b; }
 	.preparing { background: #fce4de; color: #b65345; }
+	.offer-status { display: inline-flex; padding: 5px 8px; border-radius: 999px; background: #f3eee9; color: var(--muted); font-size: 0.65rem; font-weight: 800; }
+	.offer-status.active { background: #fce4de; color: var(--primary-dark); }
 
 	.stock-panel {
 		display: flex;
@@ -682,8 +744,27 @@ import Layout from '../layouts/Layout.astro';
 	.close-form { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 1.6rem; }
 	.product-form label { display: grid; gap: 6px; color: var(--muted); font-size: 0.78rem; font-weight: 800; }
 	.product-form input, .product-form select { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--text); font: inherit; }
+	.product-form .offer-toggle { display: flex; align-items: center; gap: 9px; cursor: pointer; }
+	.product-form .offer-toggle input { width: 16px; height: 16px; padding: 0; accent-color: var(--primary); }
 	.form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
 	.form-cancel { border: 1px solid var(--line); background: #fff; color: var(--muted); cursor: pointer; }
+	.admin-notification { position: fixed; right: 24px; bottom: 24px; z-index: 8; margin: 0; padding: 13px 17px; border-radius: 12px; background: #2e221f; color: #fff; box-shadow: var(--shadow); font-size: 0.82rem; font-weight: 800; }
+	.admin-notification[hidden] { display: none; }
+	.auctions-panel { margin-top: 20px; }
+	.auction-live { padding: 6px 10px; border-radius: 999px; background: #e4f4e9; color: #47815b; font-size: 0.68rem; font-weight: 800; }
+	.auction-card { display: grid; grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr); gap: 24px; margin-top: 22px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #fffaf7; }
+	.auction-art { position: relative; display: grid; place-items: center; min-height: 210px; border-radius: 13px; background: linear-gradient(135deg, #bd6c7e, #f4bd55); font-size: 5rem; }
+	.auction-art span { position: absolute; right: 12px; bottom: 12px; padding: 6px 9px; border-radius: 999px; background: rgba(255, 255, 255, 0.86); color: var(--text); font-size: 0.68rem; font-weight: 800; }
+	.auction-content h3 { margin: 7px 0 8px; font-size: 1.4rem; }
+	.auction-content > p:not(.category-label) { margin: 0; color: var(--muted); line-height: 1.5; }
+	.auction-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0; }
+	.auction-stats div { display: grid; gap: 4px; }
+	.auction-stats small { color: var(--muted); font-size: 0.68rem; }
+	.auction-stats strong { color: var(--primary-dark); font-size: 0.92rem; }
+	.auction-actions { display: flex; align-items: end; gap: 10px; }
+	.auction-actions label { display: grid; flex: 1; gap: 6px; color: var(--muted); font-size: 0.75rem; font-weight: 800; }
+	.auction-actions input { padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--text); font: inherit; }
+	.auction-feedback { min-height: 18px; margin: 9px 0 0; color: var(--primary-dark); font-size: 0.78rem; font-weight: 800; }
 
 	/* Responsive layout */
 	@media (max-width: 900px) {
@@ -714,6 +795,8 @@ import Layout from '../layouts/Layout.astro';
 		.content-grid { grid-template-columns: 1fr; }
 		.metrics { margin-top: 30px; }
 		.panel { padding: 20px 16px; }
+		.auction-card { grid-template-columns: 1fr; }
+		.auction-stats { grid-template-columns: 1fr 1fr; }
 		.filter-row { overflow-x: auto; }
 	}
 </style>

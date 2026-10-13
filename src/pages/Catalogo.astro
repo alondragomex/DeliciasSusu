@@ -5,17 +5,21 @@ const products = [
 	{
 		name: 'Pastel de chocolate',
 		description: 'Bizcocho húmedo, ganache artesanal y cacao intenso.',
-		price: '$500',
+		price: '$450',
+		originalPrice: '$500',
 		category: 'Pasteles',
 		icon: '🍰',
 		className: 'chocolate',
 		badge: 'Más vendido',
+		secondaryBadge: 'Ofertas',
+		isOffer: true,
 		availability: 'Entrega en 24 h',
 	},
 	{
 		name: 'Tarta de mango',
 		description: 'Crema ligera, base suave y mango natural de temporada.',
 		price: '$700',
+		originalPrice: '$700',
 		category: 'Tartas',
 		icon: '🥭',
 		className: 'mango',
@@ -26,6 +30,7 @@ const products = [
 		name: 'Cupcakes surtidos',
 		description: 'Seis piezas decoradas a mano con sabores para compartir.',
 		price: '$300',
+		originalPrice: '$300',
 		category: 'Cupcakes',
 		icon: '🧁',
 		className: 'cupcake',
@@ -36,6 +41,7 @@ const products = [
 		name: 'Tarta de frutos rojos',
 		description: 'Frutos rojos frescos sobre crema de vainilla y almendra.',
 		price: '$650',
+		originalPrice: '$650',
 		category: 'Tartas',
 		icon: '🍓',
 		className: 'berries',
@@ -45,17 +51,21 @@ const products = [
 	{
 		name: 'Brownies surtidos',
 		description: 'Cuatro brownies de chocolate con nuez y caramelo salado.',
-		price: '$320',
+		price: '$288',
+		originalPrice: '$320',
 		category: 'Regalos',
 		icon: '🍫',
 		className: 'brownie',
 		badge: 'Para compartir',
+		secondaryBadge: 'Ofertas',
+		isOffer: true,
 		availability: 'Entrega en 12 h',
 	},
 	{
 		name: 'Caja desayuno dulce',
 		description: 'Mini panqué, galletas, fruta y una bebida para sorprender.',
 		price: '$450',
+		originalPrice: '$450',
 		category: 'Regalos',
 		icon: '🎁',
 		className: 'gift',
@@ -66,6 +76,7 @@ const products = [
 		name: 'Pastel de vainilla',
 		description: 'Bizcocho de vainilla con relleno cremoso y decoración artesanal.',
 		price: '$550',
+		originalPrice: '$550',
 		category: 'Pasteles',
 		icon: '🎂',
 		className: 'vanilla',
@@ -75,11 +86,14 @@ const products = [
 	{
 		name: 'Galletas decoradas',
 		description: 'Galletas de mantequilla decoradas a mano para regalar o celebrar.',
-		price: '$280',
+		price: '$252',
+		originalPrice: '$280',
 		category: 'Regalos',
 		icon: '🍪',
 		className: 'cookies',
 		badge: 'Oferta',
+		secondaryBadge: 'Ofertas',
+		isOffer: true,
 		availability: 'Entrega en 12 h',
 	},
 ];
@@ -98,6 +112,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			<nav class="nav" aria-label="Navegación principal">
 				<a href="/Landing">Inicio</a>
 				<a class="active" href="/Catalogo" aria-current="page">Catálogo</a>
+				<a href="/Landing#beneficios">Nosotros</a>
 				<a href="/Landing#contacto">Contacto</a>
 			</nav>
 
@@ -119,8 +134,9 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 				<span aria-hidden="true">⌕</span>
 				<input id="product-search" type="search" placeholder="Buscar un postre" />
 			</label>
-			<div class="filters" role="group" aria-label="Categorías de productos">
+				<div class="filters" role="group" aria-label="Categorías de productos">
 				{categories.map((category, index) => <button class:list={{ active: index === 0 }} type="button" data-category={category}>{category}</button>)}
+				<button type="button" data-category="Ofertas">Ofertas</button>
 			</div>
 		</section>
 
@@ -128,13 +144,12 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			<div class="results-heading"><div><p class="eyebrow">Nuestro catálogo</p><h2 id="results-title">Dulces para cada momento</h2></div><span id="result-count">{products.length} productos</span></div>
 			<div class="product-grid" id="product-grid">
 				{products.map((product) => (
-					<article class="product-card" data-category={product.category} data-name={product.name.toLowerCase()} data-product={product.name} data-description={product.description} data-price={product.price} data-icon={product.icon} data-class={product.className} data-availability={product.availability}>
-						<div class:list={['product-art', product.className]}><span class="product-badge">{product.badge}</span><span class="dessert-icon" aria-hidden="true">{product.icon}</span></div>
+					<article class="product-card" data-category={product.category} data-offer={product.isOffer ? 'true' : 'false'} data-name={product.name.toLowerCase()} data-product={product.name} data-description={product.description} data-price={product.price} data-original-price={product.originalPrice} data-icon={product.icon} data-class={product.className} data-availability={product.availability}>
+						<div class:list={['product-art', product.className]}><span class="product-badge">{product.badge}</span>{product.secondaryBadge && <span class="product-badge product-badge-right">{product.secondaryBadge}</span>}<span class="dessert-icon" aria-hidden="true">{product.icon}</span></div>
 						<div class="product-info">
 							<div class="category-label">{product.category}</div>
 							<h3>{product.name}</h3>
-							<p>{product.description}</p>
-							<div class="product-footer"><div><strong>{product.price}</strong><small>MXN</small></div><span class="availability">{product.availability}</span></div>
+							<div class="product-footer"><div>{product.isOffer && <del class="original-price">{product.originalPrice}</del>}<strong>{product.price}</strong><small>MXN</small></div><span class="availability">{product.availability}</span></div>
 							<button class="order-button" type="button" data-detail-button>Ver detalle <span aria-hidden="true">→</span></button>
 						</div>
 					</article>
@@ -148,13 +163,14 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			<article class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title">
 				<button class="close-modal" type="button" aria-label="Cerrar detalle" data-close-modal>×</button>
 				<div class="detail-art product-art" id="detail-art"><span class="dessert-icon" id="detail-icon" aria-hidden="true"></span></div>
-				<div class="detail-content">
+					<div class="detail-content">
 					<p class="category-label" id="detail-category"></p>
 					<h2 id="detail-title"></h2>
 					<p class="detail-description" id="detail-description"></p>
 					<p class="availability" id="detail-availability"></p>
-					<div class="detail-purchase"><strong id="detail-price"></strong><span class="quantity-label">Cantidad</span><div class="quantity-control"><button type="button" id="decrease-quantity" aria-label="Disminuir cantidad">−</button><input id="quantity" type="number" min="1" max="20" value="1" aria-label="Cantidad"><button type="button" id="increase-quantity" aria-label="Aumentar cantidad">+</button></div></div>
+							<div class="detail-purchase"><div class="detail-price-group"><del class="original-price" id="detail-original-price"></del><strong id="detail-price"></strong></div><span class="quantity-label">Cantidad</span><div class="quantity-control"><button type="button" id="decrease-quantity" aria-label="Disminuir cantidad">−</button><input id="quantity" type="text" value="1" aria-label="Cantidad"><button type="button" id="increase-quantity" aria-label="Aumentar cantidad">+</button></div></div>
 					<button class="add-cart-button" id="add-cart" type="button">Agregar al carrito <span aria-hidden="true">+</span></button>
+					<button class="back-to-catalog" type="button" data-close-modal>Regresar al catálogo</button>
 					<p class="cart-feedback" id="cart-feedback" role="status" aria-live="polite"></p>
 					<section class="related-section" aria-labelledby="related-title"><h3 id="related-title">Productos relacionados</h3><div class="related-grid" id="related-grid"></div></section>
 				</div>
@@ -169,6 +185,36 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 				<div class="cart-empty" id="cart-empty">Todavía no agregas productos.</div>
 				<div class="cart-summary"><div><span>Subtotal</span><strong id="cart-subtotal">$0 MXN</strong></div><div><span>Total</span><strong id="cart-total-price">$0 MXN</strong></div><button class="checkout-button" id="checkout-button" type="button">Ir a pagar <span aria-hidden="true">→</span></button><p class="checkout-feedback" id="checkout-feedback" role="status" aria-live="polite"></p></div>
 			</aside>
+		</div>
+
+		<div class="checkout-modal" id="checkout-modal" hidden>
+			<div class="modal-backdrop" data-close-checkout></div>
+			<section class="checkout-panel" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+				<div class="checkout-heading">
+					<div><p class="eyebrow">Compra simulada</p><h2 id="checkout-title">Completa tu pedido</h2></div>
+					<button class="close-modal" type="button" aria-label="Cerrar checkout" data-close-checkout>×</button>
+				</div>
+				<form class="checkout-form" id="checkout-form" novalidate>
+					<div class="checkout-fields">
+						<label>Nombre completo<input id="checkout-name" name="name" type="text" autocomplete="name" required /></label>
+						<label>Correo electrónico<input id="checkout-email" name="email" type="email" autocomplete="email" required /></label>
+						<label class="full-field">Dirección de entrega<input id="checkout-address" name="address" type="text" autocomplete="street-address" required /></label>
+						<label>Método de pago<select id="checkout-payment" name="payment"><option>Tarjeta (simulada)</option><option>Transferencia (simulada)</option><option>Pago contra entrega</option></select></label>
+						<label>Fecha de entrega<select id="checkout-delivery" name="delivery"><option>Lo antes posible</option><option>Mañana</option><option>Elegiré una fecha después</option></select></label>
+					</div>
+					<div class="checkout-summary"><span>Total a pagar</span><strong id="checkout-total">$0 MXN</strong></div>
+					<p class="checkout-error" id="checkout-error" role="alert" aria-live="polite"></p>
+					<button class="checkout-button" type="submit">Confirmar pedido <span aria-hidden="true">→</span></button>
+				</form>
+				<div class="purchase-confirmation" id="purchase-confirmation" hidden>
+					<span class="confirmation-icon" aria-hidden="true">✓</span>
+					<p class="eyebrow">Pedido confirmado</p>
+					<h2>¡Gracias por tu compra!</h2>
+					<p>Preparamos tu pedido con mucho cariño. Recibirás la confirmación en tu correo.</p>
+					<strong id="confirmation-order"></strong>
+					<a class="btn btn-primary" href="/Perfil">Ver mi perfil</a>
+				</div>
+			</section>
 		</div>
 
 		<section class="catalog-footer">
@@ -194,6 +240,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	const detailDescription = document.querySelector<HTMLElement>('#detail-description');
 	const detailAvailability = document.querySelector<HTMLElement>('#detail-availability');
 	const detailPrice = document.querySelector<HTMLElement>('#detail-price');
+	const detailOriginalPrice = document.querySelector<HTMLElement>('#detail-original-price');
 	const quantity = document.querySelector<HTMLInputElement>('#quantity');
 	const cartCount = document.querySelector<HTMLElement>('#cart-count');
 	const cartButton = document.querySelector<HTMLButtonElement>('#cart-button');
@@ -205,7 +252,13 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	const cartSubtotal = document.querySelector<HTMLElement>('#cart-subtotal');
 	const cartTotalPrice = document.querySelector<HTMLElement>('#cart-total-price');
 	const checkoutFeedback = document.querySelector<HTMLElement>('#checkout-feedback');
-	type CartItem = { name: string; price: number; icon: string; quantity: number };
+	const checkoutModal = document.querySelector<HTMLElement>('#checkout-modal');
+	const checkoutForm = document.querySelector<HTMLFormElement>('#checkout-form');
+	const checkoutTotal = document.querySelector<HTMLElement>('#checkout-total');
+	const checkoutError = document.querySelector<HTMLElement>('#checkout-error');
+	const purchaseConfirmation = document.querySelector<HTMLElement>('#purchase-confirmation');
+	const confirmationOrder = document.querySelector<HTMLElement>('#confirmation-order');
+	type CartItem = { name: string; price: number; originalPrice: number; isOffer: boolean; icon: string; quantity: number };
 	let selectedCategory = 'Todos';
 	let selectedProduct: HTMLElement | null = null;
 	let cartItems: Record<string, CartItem> = JSON.parse(localStorage.getItem('delicias-cart-items') ?? '{}');
@@ -213,14 +266,23 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 
 	const formatPrice = (price: number) => `$${price.toLocaleString('es-MX')} MXN`;
 	const saveCart = () => localStorage.setItem('delicias-cart-items', JSON.stringify(cartItems));
+	const offerNames = new Set(['Pastel de chocolate', 'Brownies surtidos', 'Galletas decoradas']);
+	Object.values(cartItems).forEach((item) => {
+		const hadOfferFlag = typeof item.isOffer === 'boolean';
+		item.isOffer ??= offerNames.has(item.name);
+		if (!item.originalPrice) item.originalPrice = item.isOffer ? Math.round(item.price / 0.9) : item.price;
+		if (!item.isOffer && !hadOfferFlag) item.price = item.originalPrice;
+	});
+	saveCart();
 
 	const updateCartCount = () => {
 		cartTotal = Object.values(cartItems).reduce((total, item) => total + item.quantity, 0);
 		if (cartCount) cartCount.textContent = String(cartTotal);
 		cartButton?.setAttribute('aria-label', `Carrito, ${cartTotal} productos`);
-		const subtotal = Object.values(cartItems).reduce((total, item) => total + item.price * item.quantity, 0);
+		const subtotal = Object.values(cartItems).reduce((total, item) => total + (item.originalPrice ?? item.price) * item.quantity, 0);
+		const total = Object.values(cartItems).reduce((sum, item) => sum + item.price * item.quantity, 0);
 		if (cartSubtotal) cartSubtotal.textContent = formatPrice(subtotal);
-		if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(subtotal);
+		if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(total);
 		if (cartEmpty) cartEmpty.hidden = cartTotal !== 0;
 	};
 
@@ -237,7 +299,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			const name = button.dataset.product;
 			const action = button.dataset.cartAction;
 			if (!name || !cartItems[name]) return;
-			if (action === 'increase') cartItems[name].quantity = Math.min(20, cartItems[name].quantity + 1);
+			if (action === 'increase') cartItems[name].quantity += 1;
 			if (action === 'decrease') cartItems[name].quantity -= 1;
 			if (action === 'remove' || cartItems[name].quantity <= 0) delete cartItems[name];
 			saveCart();
@@ -256,6 +318,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		detailDescription.textContent = card.dataset.description ?? '';
 		detailAvailability.textContent = card.dataset.availability ?? '';
 		detailPrice.textContent = card.dataset.price ?? '';
+		if (detailOriginalPrice) detailOriginalPrice.textContent = card.dataset.offer === 'true' ? card.dataset.originalPrice ?? '' : '';
 		if (quantity) quantity.value = '1';
 		if (cartFeedback) cartFeedback.textContent = '';
 		if (relatedGrid) {
@@ -278,11 +341,16 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		document.body.style.overflow = '';
 	};
 
+	const closeCheckout = () => {
+		if (checkoutModal) checkoutModal.hidden = true;
+		document.body.style.overflow = '';
+	};
+
 	const updateProducts = () => {
 		const searchTerm = search?.value.trim().toLowerCase() ?? '';
 		let visibleCount = 0;
 		productCards.forEach((card) => {
-			const matchesCategory = selectedCategory === 'Todos' || card.dataset.category === selectedCategory;
+			const matchesCategory = selectedCategory === 'Todos' || (selectedCategory === 'Ofertas' ? card.dataset.offer === 'true' : card.dataset.category === selectedCategory);
 			const matchesSearch = !searchTerm || card.dataset.name?.includes(searchTerm);
 			const isVisible = matchesCategory && matchesSearch;
 			card.hidden = !isVisible;
@@ -303,22 +371,53 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	search?.addEventListener('input', updateProducts);
 	productCards.forEach((card) => card.querySelector<HTMLButtonElement>('[data-detail-button]')?.addEventListener('click', () => openDetail(card)));
 	document.querySelectorAll<HTMLElement>('[data-close-modal]').forEach((element) => element.addEventListener('click', closeDetail));
-	document.querySelector<HTMLButtonElement>('#decrease-quantity')?.addEventListener('click', () => { if (quantity) quantity.value = String(Math.max(1, Number(quantity.value) - 1)); });
-	document.querySelector<HTMLButtonElement>('#increase-quantity')?.addEventListener('click', () => { if (quantity) quantity.value = String(Math.min(20, Number(quantity.value) + 1)); });
+	document.querySelector<HTMLButtonElement>('#decrease-quantity')?.addEventListener('click', () => { if (quantity) quantity.value = String(Number(quantity.value) - 1); });
+	document.querySelector<HTMLButtonElement>('#increase-quantity')?.addEventListener('click', () => { if (quantity) quantity.value = String(Number(quantity.value) + 1); });
 	document.querySelector<HTMLButtonElement>('#add-cart')?.addEventListener('click', () => {
 		if (!selectedProduct || !quantity) return;
 		const name = selectedProduct.dataset.product ?? '';
-		const amount = Math.max(1, Math.min(20, Number(quantity.value)));
+		const amount = Number(quantity.value);
 		const price = Number((selectedProduct.dataset.price ?? '$0').replace(/[^\d.]/g, ''));
-		cartItems[name] = cartItems[name] ?? { name, price, icon: selectedProduct.dataset.icon ?? '', quantity: 0 };
-		cartItems[name].quantity = Math.min(20, cartItems[name].quantity + amount);
+		const originalPrice = Number((selectedProduct.dataset.originalPrice ?? selectedProduct.dataset.price ?? '$0').replace(/[^\d.]/g, ''));
+		cartItems[name] = cartItems[name] ?? { name, price, originalPrice, isOffer: selectedProduct.dataset.offer === 'true', icon: selectedProduct.dataset.icon ?? '', quantity: 0 };
+		cartItems[name].quantity += amount;
 		saveCart();
 		renderCart();
 		if (cartFeedback) cartFeedback.textContent = 'Producto agregado al carrito.';
 	});
 	cartButton?.addEventListener('click', () => { renderCart(); if (cartModal) cartModal.hidden = false; });
-	document.querySelectorAll<HTMLElement>('[data-close-cart]').forEach((element) => element.addEventListener('click', () => { if (cartModal) cartModal.hidden = true; }));
-	document.querySelector<HTMLButtonElement>('#checkout-button')?.addEventListener('click', () => { if (checkoutFeedback) checkoutFeedback.textContent = 'Checkout próximamente. Este será el siguiente paso.'; });
+	document.querySelectorAll<HTMLElement>('[data-close-cart]').forEach((element) => element.addEventListener('click', () => { if (cartModal) cartModal.hidden = true; document.body.style.overflow = ''; }));
+	document.querySelectorAll<HTMLElement>('[data-close-checkout]').forEach((element) => element.addEventListener('click', closeCheckout));
+	document.querySelector<HTMLButtonElement>('#checkout-button')?.addEventListener('click', () => {
+		if (cartTotal === 0) {
+			if (checkoutFeedback) checkoutFeedback.textContent = 'Agrega al menos un producto para continuar.';
+			return;
+		}
+		if (cartModal) cartModal.hidden = true;
+		if (checkoutModal) checkoutModal.hidden = false;
+		if (checkoutTotal) checkoutTotal.textContent = cartTotalPrice?.textContent ?? '$0 MXN';
+		document.body.style.overflow = 'hidden';
+	});
+	checkoutForm?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		const form = new FormData(checkoutForm);
+		const name = String(form.get('name') ?? '').trim();
+		const email = String(form.get('email') ?? '').trim();
+		const address = String(form.get('address') ?? '').trim();
+		if (!name || !email || !address || !email.includes('@')) {
+			if (checkoutError) checkoutError.textContent = 'Completa tu nombre, un correo válido y la dirección de entrega.';
+			return;
+		}
+		const orderNumber = `DS-${Date.now().toString().slice(-6)}`;
+		localStorage.setItem('delicias-last-order', JSON.stringify({ orderNumber, name, email, address, total: checkoutTotal?.textContent ?? '$0 MXN', createdAt: new Date().toISOString() }));
+		cartItems = {};
+		saveCart();
+		renderCart();
+		checkoutForm.hidden = true;
+		if (checkoutError) checkoutError.textContent = '';
+		if (confirmationOrder) confirmationOrder.textContent = `Número de pedido: ${orderNumber}`;
+		if (purchaseConfirmation) purchaseConfirmation.hidden = false;
+	});
 	renderCart();
 </script>
 
@@ -363,6 +462,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.product-art.brownie { background: #8d5b43; }
 	.product-art.gift { background: #75a49a; }
 	.product-badge { position: absolute; top: 16px; left: 16px; z-index: 1; padding: 6px 9px; border-radius: 999px; background: rgba(255, 255, 255, 0.88); color: var(--text); font-size: 0.72rem; font-weight: 800; }
+	.product-badge-right { right: 16px; left: auto; }
 	.dessert-icon { position: relative; z-index: 1; font-size: 5.8rem; filter: drop-shadow(0 12px 7px rgba(66, 31, 22, 0.22)); }
 	.product-info { padding: 19px 20px 20px; }
 	.category-label { color: var(--primary-dark); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
@@ -370,12 +470,14 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.product-info p { min-height: 48px; margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
 	.product-footer { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 18px 0 15px; }
 	.product-footer div { display: flex; align-items: baseline; gap: 4px; }
+	.original-price { color: var(--muted); font-size: 0.82rem; }
 	.product-footer strong { font-size: 1.45rem; }
 	.product-footer small { color: var(--muted); font-size: 0.7rem; }
 	.availability { color: var(--muted); font-size: 0.72rem; text-align: right; }
 	.order-button, .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; }
 	.order-button { width: 100%; padding: 11px 15px; border-radius: 11px; background: var(--panel-soft); color: var(--primary-dark); }
 	.order-button:hover { background: #ffe2d6; }
+	.back-to-catalog { margin-top: 10px; border: 0; background: transparent; color: var(--primary-dark); cursor: pointer; font: inherit; font-size: 0.82rem; font-weight: 800; }
 	.product-modal[hidden] { display: none; }
 	.product-modal { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 20px; }
 	.modal-backdrop { position: absolute; inset: 0; background: rgba(46, 34, 31, 0.48); }
@@ -386,6 +488,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.detail-content h2 { margin: 7px 0 12px; font-size: clamp(1.8rem, 4vw, 2.7rem); line-height: 1; }
 	.detail-description { margin: 0 0 12px; color: var(--muted); line-height: 1.6; }
 	.detail-purchase { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 16px; margin: 25px 0 16px; }
+	.detail-price-group { display: flex; align-items: baseline; gap: 8px; }
 	.detail-purchase strong { font-size: 1.7rem; }
 	.quantity-label { grid-column: 1 / -1; color: var(--muted); font-size: 0.8rem; font-weight: 700; }
 	.quantity-control { display: flex; align-items: center; justify-self: end; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
@@ -422,6 +525,26 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.cart-summary span { color: var(--muted); }
 	.checkout-button { width: 100%; margin-top: 15px; padding: 13px; border: 0; border-radius: 11px; background: var(--primary); color: white; cursor: pointer; font: inherit; font-weight: 800; }
 	.checkout-feedback { min-height: 20px; margin: 10px 0 0; color: var(--primary-dark); font-size: 0.85rem; font-weight: 700; text-align: center; }
+	.checkout-modal[hidden] { display: none; }
+	.checkout-modal { position: fixed; inset: 0; z-index: 12; display: grid; place-items: center; padding: 20px; }
+	.checkout-panel { position: relative; width: min(700px, 100%); max-height: 92vh; overflow: auto; padding: 32px; border-radius: 22px; background: var(--panel); box-shadow: var(--shadow); }
+	.checkout-heading { display: flex; align-items: start; justify-content: space-between; }
+	.checkout-heading h2 { margin: 0; font-size: 2rem; }
+	.checkout-form { margin-top: 26px; }
+	.checkout-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+	.checkout-fields label { display: grid; gap: 7px; color: var(--muted); font-size: 0.8rem; font-weight: 800; }
+	.checkout-fields input, .checkout-fields select { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: white; color: var(--text); font: inherit; }
+	.full-field { grid-column: 1 / -1; }
+	.checkout-summary { display: flex; justify-content: space-between; gap: 16px; margin: 24px 0 8px; padding-top: 18px; border-top: 1px solid var(--line); }
+	.checkout-summary span { color: var(--muted); }
+	.checkout-summary strong { font-size: 1.2rem; }
+	.checkout-error { min-height: 20px; margin: 8px 0; color: var(--primary-dark); font-size: 0.82rem; font-weight: 700; }
+	.purchase-confirmation { display: grid; justify-items: center; gap: 12px; padding: 30px 12px 10px; text-align: center; }
+	.purchase-confirmation[hidden] { display: none; }
+	.confirmation-icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #e4f4e9; color: #47815b; font-size: 2rem; font-weight: 800; }
+	.purchase-confirmation h2 { margin: 0; font-size: 2rem; }
+	.purchase-confirmation p:not(.eyebrow) { max-width: 420px; margin: 0; color: var(--muted); line-height: 1.6; }
+	.purchase-confirmation strong { color: var(--primary-dark); }
 	.empty-state { margin: 28px 0 0; color: var(--muted); text-align: center; }
 	.catalog-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 38px 42px; border-radius: 24px; background: linear-gradient(120deg, #fff0e9, #fff9e7); }
 	.catalog-footer h2 { margin: 0; font-size: clamp(1.7rem, 3vw, 2.4rem); letter-spacing: -0.04em; }
@@ -432,5 +555,5 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.footer p { margin: 0; }
 	.footer a { color: var(--primary-dark); font-weight: 700; }
 	@media (max-width: 820px) { .nav { display: none; } .catalog-intro, .catalog-controls, .catalog-footer { align-items: stretch; flex-direction: column; } .catalog-note { width: fit-content; } .filters { justify-content: start; } .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .detail-panel { grid-template-columns: 1fr; } .detail-art { min-height: 180px; } }
-	@media (max-width: 560px) { .catalog-shell { padding-inline: 16px; } .topbar { padding-top: 10px; } .login-link { font-size: 0.85rem; } .catalog-intro { padding-top: 40px; } .product-grid { grid-template-columns: 1fr; } .catalog-footer { padding: 28px 24px; } .footer { flex-direction: column; } }
+	@media (max-width: 560px) { .catalog-shell { padding-inline: 16px; } .topbar { padding-top: 10px; } .login-link { font-size: 0.85rem; } .catalog-intro { padding-top: 40px; } .product-grid { grid-template-columns: 1fr; } .catalog-footer { padding: 28px 24px; } .footer { flex-direction: column; } .checkout-panel { padding: 24px 18px; } .checkout-fields { grid-template-columns: 1fr; } .full-field { grid-column: auto; } }
 </style>
