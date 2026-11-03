@@ -1,0 +1,388 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="campaign-shell">
+		<header class="topbar">
+			<a class="brand-wrap" href="/Landing" aria-label="Volver al inicio de Delicias Susu">
+				<span class="brand-mark">D</span>
+				<span>Delicias Susu</span>
+			</a>
+			<nav aria-label="Navegación de campaña">
+				<a href="/Promociones">Promociones</a>
+				<a href="/Catalogo">Catálogo</a>
+			</nav>
+		</header>
+
+		<section class="campaign-hero" aria-labelledby="campaign-title">
+			<div class="campaign-copy">
+				<p class="eyebrow">Campaña especial · Momentos que se comparten</p>
+				<h1>Un pastel puede convertir cualquier día en una celebración.</h1>
+				<p class="lead">
+					Descubre nuestra selección artesanal para regalar, compartir y crear recuerdos
+					dulces. Una experiencia visual de compra pensada para cada ocasión.
+				</p>
+				<div class="campaign-actions">
+					<a class="btn btn-primary" href="/Catalogo">Comprar ahora <span aria-hidden="true">→</span></a>
+					<a class="text-link" href="#testimonios">Leer reseñas <span aria-hidden="true">↓</span></a>
+				</div>
+				<div class="campaign-proof" aria-label="Información de la campaña">
+					<span><strong>4.9/5</strong> reseñas verificadas</span>
+					<span><strong>+200</strong> momentos celebrados</span>
+				</div>
+			</div>
+
+			<div class="featured-product">
+				<span class="campaign-badge">Producto destacado</span>
+				<div class="product-art" aria-hidden="true">🍰</div>
+				<div class="product-heading">
+					<div>
+						<p class="eyebrow">Favorito de la comunidad</p>
+						<h2>Pastel de chocolate</h2>
+					</div>
+					<strong>$450 <small>MXN</small></strong>
+				</div>
+				<p>Bizcocho húmedo, ganache artesanal y cacao intenso para compartir.</p>
+				<a class="product-link" href="/Catalogo">Ver producto <span aria-hidden="true">→</span></a>
+			</div>
+		</section>
+
+		<section class="benefits" aria-label="Beneficios de la campaña">
+			<article>
+				<span aria-hidden="true">✦</span>
+				<h2>Hecho artesanalmente</h2>
+				<p>Recetas preparadas con ingredientes frescos y cuidado en cada detalle.</p>
+			</article>
+			<article>
+				<span aria-hidden="true">♡</span>
+				<h2>Para cada ocasión</h2>
+				<p>Encuentra un detalle para cumpleaños, reuniones o simplemente consentirte.</p>
+			</article>
+			<article>
+				<span aria-hidden="true">⌁</span>
+				<h2>Entrega especial</h2>
+				<p>Recibe tu pedido listo para compartir en el momento que lo necesitas.</p>
+			</article>
+		</section>
+
+		<section class="testimonials" id="testimonios" aria-labelledby="testimonials-title">
+			<div class="section-heading">
+				<p class="eyebrow">Lo que dicen nuestros clientes</p>
+				<h2 id="testimonials-title">Pequeños momentos, grandes sonrisas.</h2>
+			</div>
+			<div class="testimonial-grid">
+				<blockquote>
+					<p>“El pastel llegó precioso y el sabor fue todavía mejor. Se convirtió en el favorito de la fiesta.”</p>
+					<footer><strong>María R.</strong><span>Cliente feliz</span></footer>
+				</blockquote>
+				<blockquote>
+					<p>“La presentación hizo que mi regalo se sintiera muy especial. Definitivamente volvería a pedir.”</p>
+					<footer><strong>Daniela G.</strong><span>Compra verificada</span></footer>
+				</blockquote>
+				<blockquote>
+					<p>“Los cupcakes estaban frescos, bonitos y llegaron a tiempo. Una experiencia muy dulce.”</p>
+					<footer><strong>Jorge M.</strong><span>Cliente frecuente</span></footer>
+				</blockquote>
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<style>
+	.campaign-shell {
+		max-width: 1160px;
+		min-height: 100vh;
+		margin: 0 auto;
+		padding: 24px 20px 64px;
+	}
+
+	.topbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.brand-wrap,
+	.topbar nav {
+		display: inline-flex;
+		align-items: center;
+		gap: 24px;
+	}
+
+	.brand-wrap {
+		gap: 12px;
+		color: var(--text);
+		font-weight: 800;
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark {
+		display: grid;
+		width: 42px;
+		height: 42px;
+		place-items: center;
+		border-radius: 14px;
+		background: linear-gradient(135deg, var(--primary), #eea368);
+		color: white;
+		box-shadow: var(--shadow);
+	}
+
+	.topbar nav a,
+	.text-link,
+	.product-link {
+		color: var(--primary-dark);
+		font-weight: 700;
+	}
+
+	.campaign-hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+		align-items: center;
+		gap: 70px;
+		margin-top: 12vh;
+	}
+
+	.eyebrow {
+		margin: 0 0 12px;
+		color: var(--primary-dark);
+		font-size: 0.78rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	h1,
+	h2,
+	p {
+		margin-top: 0;
+	}
+
+	h1 {
+		max-width: 670px;
+		margin-bottom: 20px;
+		font-size: clamp(2.6rem, 6vw, 5rem);
+		line-height: 0.96;
+		letter-spacing: -0.07em;
+	}
+
+	.lead,
+	.benefits p,
+	blockquote p {
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	.lead {
+		max-width: 590px;
+		font-size: 1.05rem;
+	}
+
+	.campaign-actions {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 20px;
+		margin-top: 28px;
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		padding: 14px 22px;
+		border-radius: 999px;
+		font-weight: 800;
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--primary), #f08d69);
+		color: white;
+		box-shadow: 0 12px 25px rgba(217, 109, 93, 0.22);
+	}
+
+	.campaign-proof {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 24px;
+		margin-top: 44px;
+		color: var(--muted);
+		font-size: 0.88rem;
+	}
+
+	.campaign-proof strong {
+		display: block;
+		margin-bottom: 3px;
+		color: var(--text);
+		font-size: 1.1rem;
+	}
+
+	.featured-product {
+		position: relative;
+		padding: 30px;
+		border: 1px solid rgba(217, 109, 93, 0.14);
+		border-radius: 30px;
+		background: linear-gradient(150deg, #fff1df, #fffaf6 78%);
+		box-shadow: var(--shadow);
+	}
+
+	.campaign-badge {
+		display: inline-block;
+		padding: 8px 12px;
+		border-radius: 999px;
+		background: white;
+		color: var(--primary-dark);
+		font-size: 0.75rem;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.product-art {
+		display: grid;
+		height: 220px;
+		place-items: center;
+		margin: 24px 0;
+		border-radius: 24px;
+		background: rgba(247, 203, 130, 0.42);
+		font-size: 7rem;
+	}
+
+	.product-heading {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	.product-heading .eyebrow {
+		margin-bottom: 6px;
+		font-size: 0.68rem;
+	}
+
+	.product-heading h2 {
+		margin-bottom: 0;
+		font-size: 1.4rem;
+	}
+
+	.product-heading > strong {
+		color: var(--primary-dark);
+		font-size: 1.2rem;
+		white-space: nowrap;
+	}
+
+	.product-heading small {
+		font-size: 0.65rem;
+	}
+
+	.featured-product > p {
+		margin: 12px 0 20px;
+		color: var(--muted);
+		line-height: 1.55;
+	}
+
+	.benefits,
+	.testimonials {
+		margin-top: 100px;
+	}
+
+	.benefits {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 22px;
+	}
+
+	.benefits article {
+		padding: 22px;
+		border-top: 2px solid var(--secondary);
+	}
+
+	.benefits article > span {
+		color: var(--primary);
+		font-size: 1.5rem;
+	}
+
+	.benefits h2 {
+		margin: 16px 0 8px;
+		font-size: 1.15rem;
+	}
+
+	.benefits p {
+		margin-bottom: 0;
+		font-size: 0.92rem;
+	}
+
+	.section-heading {
+		max-width: 600px;
+	}
+
+	.section-heading h2 {
+		margin-bottom: 0;
+		font-size: clamp(1.8rem, 4vw, 3rem);
+		letter-spacing: -0.05em;
+	}
+
+	.testimonial-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+		margin-top: 28px;
+	}
+
+	blockquote {
+		margin: 0;
+		padding: 24px;
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		background: rgba(255, 255, 255, 0.72);
+	}
+
+	blockquote p {
+		min-height: 104px;
+		margin-bottom: 22px;
+	}
+
+	blockquote footer {
+		display: grid;
+		gap: 4px;
+		font-size: 0.88rem;
+	}
+
+	blockquote footer span {
+		color: var(--muted);
+		font-size: 0.78rem;
+	}
+
+	@media (max-width: 800px) {
+		.campaign-hero {
+			grid-template-columns: 1fr;
+			gap: 40px;
+			margin-top: 8vh;
+		}
+
+		.benefits,
+		.testimonial-grid {
+			grid-template-columns: 1fr;
+		}
+
+		blockquote p {
+			min-height: auto;
+		}
+	}
+
+	@media (max-width: 500px) {
+		.topbar {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.topbar nav {
+			gap: 14px;
+		}
+
+		.product-heading {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+	}
+</style>
