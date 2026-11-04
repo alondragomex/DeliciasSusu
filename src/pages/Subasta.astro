@@ -58,6 +58,19 @@ import Layout from '../layouts/Layout.astro';
 				</form>
 			</aside>
 		</section>
+
+		<section class="offers-section" aria-labelledby="offers-title">
+			<div class="section-heading">
+				<p class="eyebrow">Actividad de la subasta</p>
+				<h2 id="offers-title">Ofertas recientes</h2>
+			</div>
+			<div class="offers-list" id="offers-list">
+				<div class="offer-row"><span class="offer-avatar">L</span><div><strong>Laura M.</strong><small>Hace 2 min</small></div><b>$380 MXN</b></div>
+				<div class="offer-row"><span class="offer-avatar">D</span><div><strong>Diego R.</strong><small>Hace 4 min</small></div><b>$350 MXN</b></div>
+				<div class="offer-row"><span class="offer-avatar">A</span><div><strong>Ana P.</strong><small>Hace 6 min</small></div><b>$320 MXN</b></div>
+			</div>
+			<p class="offers-note" id="offers-note">Las ofertas mostradas son demostrativas.</p>
+		</section>
 	</main>
 </Layout>
 
@@ -67,6 +80,7 @@ import Layout from '../layouts/Layout.astro';
 	const bidInput = document.querySelector<HTMLInputElement>('#bid-amount');
 	const currentBid = document.querySelector<HTMLElement>('#current-bid');
 	const feedback = document.querySelector<HTMLElement>('#bid-feedback');
+	const offersList = document.querySelector<HTMLElement>('#offers-list');
 	let remainingSeconds = 299;
 
 	const renderTimer = () => {
@@ -101,6 +115,23 @@ import Layout from '../layouts/Layout.astro';
 		const currency = document.createElement('small');
 		currency.textContent = 'MXN';
 		currentBid.append(currency);
+		if (offersList) {
+			const offer = document.createElement('div');
+			offer.className = 'offer-row new-offer';
+			const avatar = document.createElement('span');
+			avatar.className = 'offer-avatar';
+			avatar.textContent = 'Tú';
+			const bidder = document.createElement('div');
+			const name = document.createElement('strong');
+			name.textContent = 'Tu oferta';
+			const time = document.createElement('small');
+			time.textContent = 'Justo ahora';
+			bidder.append(name, time);
+			const value = document.createElement('b');
+			value.textContent = `$${amount} MXN`;
+			offer.append(avatar, bidder, value);
+			offersList.prepend(offer);
+		}
 		feedback.textContent = 'Oferta registrada (simulado).';
 		feedback.className = 'bid-feedback success';
 		bidForm.reset();
@@ -387,6 +418,71 @@ import Layout from '../layouts/Layout.astro';
 
 	.bid-feedback.error {
 		color: var(--primary-dark);
+	}
+
+	.offers-section {
+		margin-top: 70px;
+	}
+
+	.section-heading h2 {
+		margin-bottom: 22px;
+		font-size: clamp(1.8rem, 4vw, 2.8rem);
+		letter-spacing: -0.05em;
+	}
+
+	.offers-list {
+		display: grid;
+		gap: 10px;
+		max-width: 760px;
+	}
+
+	.offer-row {
+		display: grid;
+		grid-template-columns: 42px 1fr auto;
+		align-items: center;
+		gap: 14px;
+		padding: 15px 18px;
+		border: 1px solid var(--line);
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.8);
+	}
+
+	.offer-avatar {
+		display: grid;
+		width: 38px;
+		height: 38px;
+		place-items: center;
+		border-radius: 12px;
+		background: var(--panel-soft);
+		color: var(--primary-dark);
+		font-size: 0.8rem;
+		font-weight: 800;
+	}
+
+	.offer-row div {
+		display: grid;
+		gap: 3px;
+	}
+
+	.offer-row small {
+		color: var(--muted);
+		font-size: 0.75rem;
+	}
+
+	.offer-row b {
+		color: var(--primary-dark);
+		font-size: 0.95rem;
+	}
+
+	.new-offer {
+		border-color: rgba(217, 109, 93, 0.42);
+		background: #fffaf7;
+	}
+
+	.offers-note {
+		margin-top: 14px;
+		color: var(--muted);
+		font-size: 0.8rem;
 	}
 
 	@media (max-width: 780px) {
