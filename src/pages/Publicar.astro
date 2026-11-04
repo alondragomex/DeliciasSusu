@@ -1,0 +1,452 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="publish-shell">
+		<header class="topbar">
+			<a class="brand-wrap" href="/Landing" aria-label="Volver al inicio de Delicias Susu">
+				<span class="brand-mark">D</span>
+				<span>Delicias Susu</span>
+			</a>
+			<nav aria-label="Navegación de publicaciones">
+				<a href="/Perfil">Mi perfil</a>
+				<a href="/Catalogo">Catálogo</a>
+			</nav>
+		</header>
+
+		<section class="publish-intro" aria-labelledby="publish-title">
+			<p class="eyebrow">Mercado de la comunidad</p>
+			<h1 id="publish-title">Publica tu producto</h1>
+			<p>Comparte algo delicioso con otros usuarios. Este formulario muestra el flujo C2C de manera simulada, sin realizar publicaciones reales.</p>
+		</section>
+
+		<section class="publish-layout">
+			<form class="publish-form" id="publish-form">
+				<div class="form-heading">
+					<div class="step-number">01</div>
+					<div>
+						<h2>Cuéntanos sobre tu producto</h2>
+						<p>Completa los datos para crear tu publicación.</p>
+					</div>
+				</div>
+
+				<label for="product-name">Nombre del producto</label>
+				<input id="product-name" name="name" type="text" placeholder="Ej. Caja de galletas caseras" required />
+
+				<div class="field-grid">
+					<div>
+						<label for="product-price">Precio</label>
+						<div class="price-input"><span>$</span><input id="product-price" name="price" type="number" min="1" step="1" placeholder="250" required /><span>MXN</span></div>
+					</div>
+					<div>
+						<label for="product-category">Categoría</label>
+						<select id="product-category" name="category">
+							<option>Postres</option>
+							<option>Regalos</option>
+							<option>Pasteles</option>
+							<option>Otros</option>
+						</select>
+					</div>
+				</div>
+
+				<label for="product-description">Descripción</label>
+				<textarea id="product-description" name="description" rows="5" placeholder="Describe tu producto, tamaño y presentación..." required></textarea>
+
+				<label for="product-photo">Foto del producto</label>
+				<div class="photo-input">
+					<input id="product-photo" name="photo" type="file" accept="image/*" />
+					<span id="photo-name">Ninguna foto seleccionada</span>
+				</div>
+
+				<button class="btn btn-primary" type="submit">Publicar producto <span aria-hidden="true">→</span></button>
+				<p class="form-feedback" id="publish-feedback" role="status" aria-live="polite"></p>
+			</form>
+
+			<aside class="preview-card" aria-labelledby="preview-title">
+				<div class="preview-label">Vista previa</div>
+				<div class="preview-art" id="preview-art" aria-hidden="true">🍰</div>
+				<p class="category-label" id="preview-category">Postres</p>
+				<h2 id="preview-title">Tu producto aparecerá aquí</h2>
+				<p id="preview-description">Mientras completas el formulario, podrás revisar cómo se verá tu publicación.</p>
+				<div class="preview-footer"><strong id="preview-price">$0 MXN</strong><span>Publicación simulada</span></div>
+			</aside>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	type PublishedProduct = {
+		id: string;
+		name: string;
+		price: number;
+		category: string;
+		description: string;
+		photoName: string;
+		createdAt: string;
+	};
+
+	const form = document.querySelector<HTMLFormElement>('#publish-form');
+	const nameInput = document.querySelector<HTMLInputElement>('#product-name');
+	const priceInput = document.querySelector<HTMLInputElement>('#product-price');
+	const categoryInput = document.querySelector<HTMLSelectElement>('#product-category');
+	const descriptionInput = document.querySelector<HTMLTextAreaElement>('#product-description');
+	const photoInput = document.querySelector<HTMLInputElement>('#product-photo');
+	const photoName = document.querySelector<HTMLElement>('#photo-name');
+	const previewTitle = document.querySelector<HTMLElement>('#preview-title');
+	const previewPrice = document.querySelector<HTMLElement>('#preview-price');
+	const previewCategory = document.querySelector<HTMLElement>('#preview-category');
+	const previewDescription = document.querySelector<HTMLElement>('#preview-description');
+	const feedback = document.querySelector<HTMLElement>('#publish-feedback');
+
+	const updatePreview = () => {
+		if (previewTitle) previewTitle.textContent = nameInput?.value.trim() || 'Tu producto aparecerá aquí';
+		if (previewPrice) previewPrice.textContent = `$${priceInput?.value || '0'} MXN`;
+		if (previewCategory) previewCategory.textContent = categoryInput?.value || 'Postres';
+		if (previewDescription) previewDescription.textContent = descriptionInput?.value.trim() || 'Mientras completas el formulario, podrás revisar cómo se verá tu publicación.';
+	};
+
+	[nameInput, priceInput, categoryInput, descriptionInput].forEach((input) => input?.addEventListener('input', updatePreview));
+	categoryInput?.addEventListener('change', updatePreview);
+
+	photoInput?.addEventListener('change', () => {
+		if (photoName) photoName.textContent = photoInput.files?.[0]?.name || 'Ninguna foto seleccionada';
+	});
+
+	form?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		const name = nameInput?.value.trim() ?? '';
+		const price = Number(priceInput?.value ?? 0);
+		const description = descriptionInput?.value.trim() ?? '';
+		if (!name || price <= 0 || !description || !feedback) return;
+
+		const product: PublishedProduct = {
+			id: `publication-${Date.now()}`,
+			name,
+			price,
+			category: categoryInput?.value ?? 'Postres',
+			description,
+			photoName: photoInput?.files?.[0]?.name ?? '',
+			createdAt: new Date().toISOString(),
+		};
+		const stored = JSON.parse(localStorage.getItem('delicias-publications') ?? '[]') as PublishedProduct[];
+		localStorage.setItem('delicias-publications', JSON.stringify([product, ...stored]));
+		feedback.textContent = 'Publicado (simulado). Ya puedes verlo en Mis publicaciones.';
+		feedback.className = 'form-feedback success';
+		form.reset();
+		updatePreview();
+		if (photoName) photoName.textContent = 'Ninguna foto seleccionada';
+	});
+</script>
+
+<style>
+	.publish-shell {
+		max-width: 1160px;
+		min-height: 100vh;
+		margin: 0 auto;
+		padding: 24px 20px 64px;
+	}
+
+	.topbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.brand-wrap,
+	.topbar nav {
+		display: inline-flex;
+		align-items: center;
+		gap: 22px;
+	}
+
+	.brand-wrap {
+		gap: 12px;
+		color: var(--text);
+		font-weight: 800;
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark {
+		display: grid;
+		width: 42px;
+		height: 42px;
+		place-items: center;
+		border-radius: 14px;
+		background: linear-gradient(135deg, var(--primary), #eea368);
+		color: white;
+		box-shadow: var(--shadow);
+	}
+
+	.topbar nav a {
+		color: var(--primary-dark);
+		font-weight: 700;
+	}
+
+	.publish-intro {
+		max-width: 700px;
+		margin-top: 12vh;
+	}
+
+	.eyebrow,
+	.category-label {
+		margin: 0 0 12px;
+		color: var(--primary-dark);
+		font-size: 0.78rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	h1,
+	h2,
+	p {
+		margin-top: 0;
+	}
+
+	h1 {
+		margin-bottom: 18px;
+		font-size: clamp(2.6rem, 6vw, 4.8rem);
+		line-height: 0.98;
+		letter-spacing: -0.07em;
+	}
+
+	.publish-intro > p:last-child,
+	.form-heading p,
+	.preview-card > p {
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	.publish-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+		gap: 32px;
+		margin-top: 52px;
+	}
+
+	.publish-form,
+	.preview-card {
+		padding: 30px;
+		border: 1px solid rgba(217, 109, 93, 0.14);
+		border-radius: 24px;
+		background: rgba(255, 255, 255, 0.84);
+		box-shadow: var(--shadow);
+	}
+
+	.form-heading {
+		display: flex;
+		gap: 16px;
+		align-items: flex-start;
+		margin-bottom: 28px;
+	}
+
+	.step-number {
+		display: grid;
+		width: 42px;
+		height: 42px;
+		flex: 0 0 auto;
+		place-items: center;
+		border-radius: 14px;
+		background: var(--secondary);
+		color: var(--primary-dark);
+		font-weight: 800;
+	}
+
+	.form-heading h2 {
+		margin-bottom: 6px;
+		font-size: 1.45rem;
+	}
+
+	.form-heading p {
+		margin-bottom: 0;
+		font-size: 0.9rem;
+	}
+
+	form {
+		display: grid;
+		gap: 8px;
+	}
+
+	label {
+		margin-top: 8px;
+		font-size: 0.82rem;
+		font-weight: 800;
+	}
+
+	input,
+	textarea,
+	select {
+		width: 100%;
+		padding: 12px 14px;
+		border: 1px solid rgba(46, 34, 31, 0.15);
+		border-radius: 12px;
+		background: white;
+		color: var(--text);
+		font: inherit;
+	}
+
+	textarea {
+		resize: vertical;
+	}
+
+	.field-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 14px;
+	}
+
+	.field-grid > div {
+		display: grid;
+		gap: 8px;
+	}
+
+	.price-input {
+		display: flex;
+		align-items: center;
+		border: 1px solid rgba(46, 34, 31, 0.15);
+		border-radius: 12px;
+		background: white;
+		color: var(--muted);
+	}
+
+	.price-input input {
+		border: 0;
+		border-radius: 0;
+	}
+
+	.price-input span {
+		padding: 0 12px;
+		font-size: 0.8rem;
+		font-weight: 700;
+	}
+
+	.photo-input {
+		display: grid;
+		gap: 6px;
+		padding: 14px;
+		border: 1px dashed rgba(217, 109, 93, 0.5);
+		border-radius: 12px;
+		background: #fffaf7;
+	}
+
+	.photo-input input {
+		padding: 0;
+		border: 0;
+		background: transparent;
+	}
+
+	.photo-input span {
+		color: var(--muted);
+		font-size: 0.82rem;
+	}
+
+	.btn {
+		margin-top: 18px;
+		padding: 14px 20px;
+		border: 0;
+		border-radius: 12px;
+		font: inherit;
+		font-weight: 800;
+		cursor: pointer;
+	}
+
+	.btn-primary {
+		background: var(--primary);
+		color: white;
+	}
+
+	.form-feedback {
+		min-height: 24px;
+		margin: 6px 0 0;
+		font-size: 0.88rem;
+		font-weight: 700;
+	}
+
+	.form-feedback.success {
+		color: #28734e;
+	}
+
+	.preview-card {
+		align-self: start;
+		background: linear-gradient(145deg, #fff0df, #fffaf6);
+	}
+
+	.preview-label {
+		color: var(--primary-dark);
+		font-size: 0.78rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.preview-art {
+		display: grid;
+		height: 180px;
+		place-items: center;
+		margin: 20px 0;
+		border-radius: 20px;
+		background: rgba(247, 203, 130, 0.42);
+		font-size: 5rem;
+	}
+
+	.preview-card .category-label {
+		margin-bottom: 8px;
+		font-size: 0.68rem;
+	}
+
+	.preview-card h2 {
+		margin-bottom: 10px;
+		font-size: 1.5rem;
+	}
+
+	.preview-card > p {
+		font-size: 0.9rem;
+	}
+
+	.preview-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-top: 24px;
+		padding-top: 18px;
+		border-top: 1px solid var(--line);
+	}
+
+	.preview-footer strong {
+		color: var(--primary-dark);
+	}
+
+	.preview-footer span {
+		color: var(--muted);
+		font-size: 0.75rem;
+	}
+
+	@media (max-width: 780px) {
+		.publish-intro {
+			margin-top: 8vh;
+		}
+
+		.publish-layout {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 500px) {
+		.topbar {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.field-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.publish-form,
+		.preview-card {
+			padding: 22px;
+		}
+	}
+</style>
