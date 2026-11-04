@@ -1,0 +1,363 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="promotions-shell">
+		<header class="topbar">
+			<a class="brand-wrap" href="/Landing" aria-label="Volver al inicio de Delicias Susu">
+				<span class="brand-mark">D</span>
+				<span>Delicias Susu</span>
+			</a>
+			<a class="back-link" href="/Catalogo">Ver catálogo <span aria-hidden="true">→</span></a>
+		</header>
+
+		<section class="hero" aria-labelledby="promotions-title">
+			<div>
+				<p class="eyebrow">Ofertas de temporada</p>
+				<h1 id="promotions-title">Un detalle dulce siempre puede costar menos.</h1>
+				<p class="hero-copy">
+					Descubre las promociones activas de Delicias Susu y aplica un código durante tu compra.
+					Estas ofertas son demostrativas para mostrar cómo funciona la experiencia comercial.
+				</p>
+			</div>
+			<div class="hero-art" aria-hidden="true">%</div>
+		</section>
+
+		<section class="promo-grid" aria-label="Promociones activas">
+			<article class="promo-card featured">
+				<span class="promo-tag">Más popular</span>
+				<strong class="promo-value">2x1</strong>
+				<h2>Cupcakes para compartir</h2>
+				<p>Compra una caja de cupcakes y recibe otra igual en tu próxima celebración.</p>
+				<a class="card-link" href="/Catalogo">Elegir cupcakes <span aria-hidden="true">→</span></a>
+			</article>
+			<article class="promo-card">
+				<span class="promo-tag">Por tiempo limitado</span>
+				<strong class="promo-value">10% OFF</strong>
+				<h2>Tu primer pedido</h2>
+				<p>Aplica el código SUSU10 y disfruta un descuento en tu primera compra simulada.</p>
+				<button class="card-link promo-select" type="button" data-code="SUSU10">Usar código <span aria-hidden="true">→</span></button>
+			</article>
+			<article class="promo-card">
+				<span class="promo-tag">Regalos</span>
+				<strong class="promo-value">Envío gratis</strong>
+				<h2>Detalles desde $500</h2>
+				<p>El envío se muestra como cortesía al superar el mínimo de compra indicado.</p>
+				<a class="card-link" href="/Catalogo">Ver productos <span aria-hidden="true">→</span></a>
+			</article>
+		</section>
+
+		<section class="code-panel" aria-labelledby="code-title">
+			<div>
+				<p class="eyebrow">Código de descuento</p>
+				<h2 id="code-title">Prueba una promoción</h2>
+				<p>Escribe un código válido para ver la confirmación visual de la aplicación.</p>
+			</div>
+			<form id="promo-form">
+				<label for="promo-code">Código</label>
+				<div class="code-row">
+					<input id="promo-code" name="promo-code" type="text" placeholder="Ej. SUSU10" autocomplete="off" />
+					<button class="btn btn-primary" type="submit">Aplicar</button>
+				</div>
+				<p class="promo-feedback" id="promo-feedback" role="status" aria-live="polite"></p>
+			</form>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	const form = document.querySelector<HTMLFormElement>('#promo-form');
+	const codeInput = document.querySelector<HTMLInputElement>('#promo-code');
+	const feedback = document.querySelector<HTMLElement>('#promo-feedback');
+	const validCodes = new Set(['SUSU10', 'DULCE10']);
+
+	const applyCode = (code: string) => {
+		const normalizedCode = code.trim().toUpperCase();
+		if (!feedback) return;
+		if (validCodes.has(normalizedCode)) {
+			feedback.textContent = `Descuento aplicado (simulado) · Código ${normalizedCode}`;
+			feedback.className = 'promo-feedback success';
+			return;
+		}
+		feedback.textContent = 'Código no disponible. Prueba con SUSU10.';
+		feedback.className = 'promo-feedback error';
+	};
+
+	form?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		applyCode(codeInput?.value ?? '');
+	});
+
+	document.querySelectorAll<HTMLButtonElement>('.promo-select').forEach((button) => {
+		button.addEventListener('click', () => {
+			const code = button.dataset.code ?? '';
+			if (codeInput) codeInput.value = code;
+			applyCode(code);
+		});
+	});
+</script>
+
+<style>
+	.promotions-shell {
+		max-width: 1160px;
+		min-height: 100vh;
+		margin: 0 auto;
+		padding: 24px 20px 56px;
+	}
+
+	.topbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.brand-wrap {
+		display: inline-flex;
+		align-items: center;
+		gap: 12px;
+		color: var(--text);
+		font-weight: 800;
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark {
+		display: grid;
+		width: 42px;
+		height: 42px;
+		place-items: center;
+		border-radius: 14px;
+		background: linear-gradient(135deg, var(--primary), #eea368);
+		color: white;
+		box-shadow: var(--shadow);
+	}
+
+	.back-link,
+	.card-link {
+		color: var(--primary-dark);
+		font-weight: 700;
+	}
+
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 180px;
+		align-items: center;
+		gap: 32px;
+		margin-top: 12vh;
+	}
+
+	.eyebrow {
+		margin: 0 0 12px;
+		color: var(--primary-dark);
+		font-size: 0.82rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	h1,
+	h2,
+	p {
+		margin-top: 0;
+	}
+
+	h1 {
+		max-width: 700px;
+		margin-bottom: 18px;
+		font-size: clamp(2.4rem, 6vw, 4.8rem);
+		line-height: 0.98;
+		letter-spacing: -0.06em;
+	}
+
+	.hero-copy,
+	.code-panel p,
+	.promo-card p {
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	.hero-copy {
+		max-width: 650px;
+		font-size: 1.05rem;
+	}
+
+	.hero-art {
+		display: grid;
+		width: 180px;
+		height: 180px;
+		place-items: center;
+		border-radius: 48px;
+		background: var(--secondary);
+		color: var(--primary-dark);
+		font-size: 6rem;
+		font-weight: 900;
+		transform: rotate(7deg);
+		box-shadow: var(--shadow);
+	}
+
+	.promo-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 16px;
+		margin-top: 56px;
+	}
+
+	.promo-card,
+	.code-panel {
+		border: 1px solid rgba(217, 109, 93, 0.12);
+		border-radius: 24px;
+		background: rgba(255, 255, 255, 0.82);
+		box-shadow: var(--shadow);
+	}
+
+	.promo-card {
+		display: flex;
+		min-height: 290px;
+		flex-direction: column;
+		padding: 26px;
+	}
+
+	.promo-card.featured {
+		background: linear-gradient(145deg, #fff0df, #fffaf6);
+	}
+
+	.promo-tag {
+		align-self: flex-start;
+		padding: 7px 10px;
+		border-radius: 999px;
+		background: #fff;
+		color: var(--primary-dark);
+		font-size: 0.75rem;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.promo-value {
+		margin-top: 28px;
+		color: var(--primary);
+		font-size: 2.4rem;
+		letter-spacing: -0.05em;
+	}
+
+	.promo-card h2 {
+		margin: 8px 0 0;
+		font-size: 1.35rem;
+	}
+
+	.promo-card p {
+		margin: 10px 0 24px;
+	}
+
+	.card-link {
+		margin-top: auto;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	.code-panel {
+		display: grid;
+		grid-template-columns: 1fr minmax(280px, 0.8fr);
+		gap: 36px;
+		align-items: center;
+		margin-top: 24px;
+		padding: 32px;
+	}
+
+	.code-panel h2 {
+		margin-bottom: 8px;
+		font-size: 1.8rem;
+	}
+
+	.code-panel p {
+		margin-bottom: 0;
+	}
+
+	#promo-form label {
+		display: block;
+		margin-bottom: 8px;
+		font-size: 0.82rem;
+		font-weight: 800;
+	}
+
+	.code-row {
+		display: flex;
+		gap: 10px;
+	}
+
+	input {
+		min-width: 0;
+		flex: 1;
+		padding: 13px 15px;
+		border: 1px solid rgba(46, 34, 31, 0.15);
+		border-radius: 12px;
+		background: #fff;
+		color: var(--text);
+		font: inherit;
+	}
+
+	.btn {
+		padding: 13px 20px;
+		border: 0;
+		border-radius: 12px;
+		font: inherit;
+		font-weight: 800;
+		cursor: pointer;
+	}
+
+	.btn-primary {
+		background: var(--primary);
+		color: white;
+	}
+
+	.promo-feedback {
+		min-height: 24px;
+		margin-top: 12px !important;
+		font-size: 0.9rem;
+		font-weight: 700;
+	}
+
+	.promo-feedback.success {
+		color: #28734e;
+	}
+
+	.promo-feedback.error {
+		color: #b65345;
+	}
+
+	@media (max-width: 760px) {
+		.hero,
+		.code-panel {
+			grid-template-columns: 1fr;
+		}
+
+		.hero {
+			margin-top: 8vh;
+		}
+
+		.hero-art {
+			width: 120px;
+			height: 120px;
+			font-size: 4rem;
+		}
+
+		.promo-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.topbar {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.code-row {
+			flex-direction: column;
+		}
+	}
+</style>
