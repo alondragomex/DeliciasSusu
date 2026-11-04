@@ -199,7 +199,14 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 						<label>Nombre completo<input id="checkout-name" name="name" type="text" autocomplete="name" required /></label>
 						<label>Correo electrónico<input id="checkout-email" name="email" type="email" autocomplete="email" required /></label>
 						<label class="full-field">Dirección de entrega<input id="checkout-address" name="address" type="text" autocomplete="street-address" required /></label>
-						<label>Método de pago<select id="checkout-payment" name="payment"><option>Tarjeta (simulada)</option><option>Transferencia (simulada)</option><option>Pago contra entrega</option></select></label>
+						<fieldset class="payment-field">
+							<legend>Método de pago</legend>
+							<div class="payment-options">
+								<label class="payment-option selected"><input type="radio" name="payment" value="Tarjeta (simulada)" checked /><span class="payment-icon" aria-hidden="true">▣</span><span><strong>Tarjeta</strong><small>Validación visual</small></span></label>
+								<label class="payment-option"><input type="radio" name="payment" value="Transferencia (simulada)" /><span class="payment-icon" aria-hidden="true">↗</span><span><strong>Transferencia</strong><small>Confirmación simulada</small></span></label>
+								<label class="payment-option"><input type="radio" name="payment" value="Pago contra entrega" /><span class="payment-icon" aria-hidden="true">✓</span><span><strong>Contra entrega</strong><small>Pago al recibir</small></span></label>
+							</div>
+						</fieldset>
 						<label>Fecha de entrega<select id="checkout-delivery" name="delivery"><option>Lo antes posible</option><option>Mañana</option><option>Elegiré una fecha después</option></select></label>
 					</div>
 					<div class="checkout-summary"><span>Total a pagar</span><strong id="checkout-total">$0 MXN</strong></div>
@@ -258,6 +265,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	const checkoutError = document.querySelector<HTMLElement>('#checkout-error');
 	const purchaseConfirmation = document.querySelector<HTMLElement>('#purchase-confirmation');
 	const confirmationOrder = document.querySelector<HTMLElement>('#confirmation-order');
+	const paymentOptions = document.querySelectorAll<HTMLElement>('.payment-option');
 	type CartItem = { name: string; price: number; originalPrice: number; isOffer: boolean; icon: string; quantity: number };
 	let selectedCategory = 'Todos';
 	let selectedProduct: HTMLElement | null = null;
@@ -404,8 +412,9 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		const name = String(form.get('name') ?? '').trim();
 		const email = String(form.get('email') ?? '').trim();
 		const address = String(form.get('address') ?? '').trim();
-		if (!name || !email || !address || !email.includes('@')) {
-			if (checkoutError) checkoutError.textContent = 'Completa tu nombre, un correo válido y la dirección de entrega.';
+		const payment = String(form.get('payment') ?? '').trim();
+		if (!name || !email || !address || !email.includes('@') || !payment) {
+			if (checkoutError) checkoutError.textContent = 'Completa tus datos y selecciona un método de pago para continuar.';
 			return;
 		}
 		const orderNumber = `DS-${Date.now().toString().slice(-6)}`;
@@ -418,6 +427,11 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		if (confirmationOrder) confirmationOrder.textContent = `Número de pedido: ${orderNumber}`;
 		if (purchaseConfirmation) purchaseConfirmation.hidden = false;
 	});
+	paymentOptions.forEach((option) => option.querySelector<HTMLInputElement>('input')?.addEventListener('change', () => {
+		paymentOptions.forEach((item) => item.classList.remove('selected'));
+		option.classList.add('selected');
+		if (checkoutError) checkoutError.textContent = `Método seleccionado: ${option.querySelector('strong')?.textContent ?? 'Pago'}.`;
+	}));
 	renderCart();
 </script>
 
@@ -534,6 +548,16 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.checkout-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
 	.checkout-fields label { display: grid; gap: 7px; color: var(--muted); font-size: 0.8rem; font-weight: 800; }
 	.checkout-fields input, .checkout-fields select { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: white; color: var(--text); font: inherit; }
+	.payment-field { grid-column: 1 / -1; margin: 0; padding: 0; border: 0; }
+	.payment-field legend { margin-bottom: 8px; color: var(--muted); font-size: 0.8rem; font-weight: 800; }
+	.payment-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+	.payment-option { display: grid !important; grid-template-columns: auto 1fr; grid-template-areas: 'icon text'; align-items: center; gap: 9px; padding: 13px; border: 1px solid var(--line); border-radius: 12px; background: white; color: var(--text) !important; cursor: pointer; }
+	.payment-option input { position: absolute; opacity: 0; pointer-events: none; }
+	.payment-option.selected { border-color: var(--primary); background: #fff3ed; box-shadow: 0 0 0 2px rgba(217, 109, 93, 0.12); }
+	.payment-icon { grid-area: icon; display: grid; width: 30px; height: 30px; place-items: center; border-radius: 9px; background: var(--panel-soft); color: var(--primary-dark); font-size: 0.9rem; }
+	.payment-option > span:last-child { display: grid; grid-area: text; gap: 3px; }
+	.payment-option strong { font-size: 0.78rem; }
+	.payment-option small { color: var(--muted); font-size: 0.68rem; font-weight: 500; }
 	.full-field { grid-column: 1 / -1; }
 	.checkout-summary { display: flex; justify-content: space-between; gap: 16px; margin: 24px 0 8px; padding-top: 18px; border-top: 1px solid var(--line); }
 	.checkout-summary span { color: var(--muted); }
@@ -555,5 +579,5 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.footer p { margin: 0; }
 	.footer a { color: var(--primary-dark); font-weight: 700; }
 	@media (max-width: 820px) { .nav { display: none; } .catalog-intro, .catalog-controls, .catalog-footer { align-items: stretch; flex-direction: column; } .catalog-note { width: fit-content; } .filters { justify-content: start; } .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .detail-panel { grid-template-columns: 1fr; } .detail-art { min-height: 180px; } }
-	@media (max-width: 560px) { .catalog-shell { padding-inline: 16px; } .topbar { padding-top: 10px; } .login-link { font-size: 0.85rem; } .catalog-intro { padding-top: 40px; } .product-grid { grid-template-columns: 1fr; } .catalog-footer { padding: 28px 24px; } .footer { flex-direction: column; } .checkout-panel { padding: 24px 18px; } .checkout-fields { grid-template-columns: 1fr; } .full-field { grid-column: auto; } }
+	@media (max-width: 560px) { .catalog-shell { padding-inline: 16px; } .topbar { padding-top: 10px; } .login-link { font-size: 0.85rem; } .catalog-intro { padding-top: 40px; } .product-grid { grid-template-columns: 1fr; } .catalog-footer { padding: 28px 24px; } .footer { flex-direction: column; } .checkout-panel { padding: 24px 18px; } .checkout-fields { grid-template-columns: 1fr; } .full-field { grid-column: auto; } .payment-field { grid-column: auto; } .payment-options { grid-template-columns: 1fr; } }
 </style>
