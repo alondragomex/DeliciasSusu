@@ -95,7 +95,35 @@ import Layout from '../layouts/Layout.astro';
 			const date = document.createElement('span');
 			date.textContent = formatDate(product.createdAt);
 			footer.append(price, date);
-			content.append(category, title, description, footer);
+			const actions = document.createElement('div');
+			actions.className = 'card-actions';
+			const editButton = document.createElement('button');
+			editButton.className = 'action-button edit-button';
+			editButton.type = 'button';
+			editButton.textContent = 'Editar';
+			editButton.addEventListener('click', () => {
+				const updatedName = window.prompt('Nuevo nombre del producto', product.name)?.trim();
+				if (!updatedName) return;
+				product.name = updatedName;
+				localStorage.setItem('delicias-publications', JSON.stringify(publications));
+				renderPublications();
+				if (feedback) feedback.textContent = 'Publicación actualizada (simulado).';
+			});
+			const deleteButton = document.createElement('button');
+			deleteButton.className = 'action-button delete-button';
+			deleteButton.type = 'button';
+			deleteButton.textContent = 'Eliminar';
+			deleteButton.addEventListener('click', () => {
+				if (!window.confirm(`¿Eliminar "${product.name}"?`)) return;
+				const productIndex = publications.findIndex(({ id }) => id === product.id);
+				if (productIndex === -1) return;
+				publications.splice(productIndex, 1);
+				localStorage.setItem('delicias-publications', JSON.stringify(publications));
+				renderPublications();
+				if (feedback) feedback.textContent = 'Publicación eliminada (simulado).';
+			});
+			actions.append(editButton, deleteButton);
+			content.append(category, title, description, footer, actions);
 			card.append(art, content);
 			publicationGrid.append(card);
 		});
@@ -311,6 +339,34 @@ import Layout from '../layouts/Layout.astro';
 		color: var(--muted);
 		font-size: 0.72rem;
 		text-align: right;
+	}
+
+	.card-actions {
+		display: flex;
+		gap: 8px;
+		margin-top: 16px;
+	}
+
+	.action-button {
+		flex: 1;
+		padding: 9px 10px;
+		border: 1px solid var(--line);
+		border-radius: 10px;
+		background: white;
+		color: var(--text);
+		font: inherit;
+		font-size: 0.8rem;
+		font-weight: 800;
+		cursor: pointer;
+	}
+
+	.action-button:hover {
+		background: var(--panel-soft);
+	}
+
+	.delete-button {
+		border-color: rgba(182, 83, 69, 0.2);
+		color: var(--primary-dark);
 	}
 
 	.empty-state {
