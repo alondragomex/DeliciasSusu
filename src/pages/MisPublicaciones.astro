@@ -1,0 +1,380 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="publications-shell">
+		<header class="topbar">
+			<a class="brand-wrap" href="/Landing" aria-label="Volver al inicio de Delicias Susu">
+				<span class="brand-mark">D</span>
+				<span>Delicias Susu</span>
+			</a>
+			<nav aria-label="Navegación de publicaciones">
+				<a href="/Publicar">Publicar producto</a>
+				<a href="/Perfil">Mi perfil</a>
+			</nav>
+		</header>
+
+		<section class="page-intro" aria-labelledby="publications-title">
+			<div>
+				<p class="eyebrow">Mi espacio de venta</p>
+				<h1 id="publications-title">Mis publicaciones</h1>
+				<p>Consulta los productos que has compartido con la comunidad. Todo lo que aparece aquí es una simulación local.</p>
+			</div>
+			<a class="btn btn-primary" href="/Publicar">+ Publicar producto</a>
+		</section>
+
+		<section class="summary" aria-label="Resumen de publicaciones">
+			<div><strong id="publication-count">0</strong><span>publicaciones activas</span></div>
+			<div><strong>Comunidad</strong><span>Visibilidad simulada</span></div>
+			<div><strong>100%</strong><span>Gestionable por ti</span></div>
+		</section>
+
+		<section class="listing-section" aria-labelledby="listing-title">
+			<div class="section-heading">
+				<p class="eyebrow">Tu escaparate</p>
+				<h2 id="listing-title">Productos publicados</h2>
+			</div>
+			<div class="publication-grid" id="publication-grid"></div>
+			<div class="empty-state" id="empty-state">
+				<div class="empty-icon" aria-hidden="true">✦</div>
+				<h3>Aún no tienes publicaciones</h3>
+				<p>Comparte tu primer producto y empieza a formar parte del mercado de la comunidad.</p>
+				<a class="btn btn-secondary" href="/Publicar">Crear publicación</a>
+			</div>
+			<p class="page-feedback" id="page-feedback" role="status" aria-live="polite"></p>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	type PublishedProduct = {
+		id: string;
+		name: string;
+		price: number;
+		category: string;
+		description: string;
+		photoName: string;
+		createdAt: string;
+	};
+
+	const publicationGrid = document.querySelector<HTMLElement>('#publication-grid');
+	const emptyState = document.querySelector<HTMLElement>('#empty-state');
+	const count = document.querySelector<HTMLElement>('#publication-count');
+	const feedback = document.querySelector<HTMLElement>('#page-feedback');
+	const publications = JSON.parse(localStorage.getItem('delicias-publications') ?? '[]') as PublishedProduct[];
+
+	const formatDate = (date: string) => new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(date));
+
+	const renderPublications = () => {
+		if (!publicationGrid || !emptyState || !count) return;
+		publicationGrid.replaceChildren();
+		count.textContent = String(publications.length);
+		emptyState.hidden = publications.length > 0;
+
+		publications.forEach((product) => {
+			const card = document.createElement('article');
+			card.className = 'publication-card';
+			const art = document.createElement('div');
+			art.className = 'publication-art';
+			art.textContent = '🍰';
+			art.setAttribute('aria-hidden', 'true');
+			const content = document.createElement('div');
+			content.className = 'publication-content';
+			const category = document.createElement('span');
+			category.className = 'category-label';
+			category.textContent = product.category;
+			const title = document.createElement('h3');
+			title.textContent = product.name;
+			const description = document.createElement('p');
+			description.textContent = product.description;
+			const footer = document.createElement('div');
+			footer.className = 'card-footer';
+			const price = document.createElement('strong');
+			price.textContent = `$${product.price} MXN`;
+			const date = document.createElement('span');
+			date.textContent = formatDate(product.createdAt);
+			footer.append(price, date);
+			content.append(category, title, description, footer);
+			card.append(art, content);
+			publicationGrid.append(card);
+		});
+	};
+
+	renderPublications();
+	if (publications.length > 0 && feedback) feedback.textContent = 'Tus publicaciones están listas para la comunidad.';
+</script>
+
+<style>
+	.publications-shell {
+		max-width: 1160px;
+		min-height: 100vh;
+		margin: 0 auto;
+		padding: 24px 20px 64px;
+	}
+
+	.topbar,
+	.page-intro,
+	.summary,
+	.card-footer {
+		display: flex;
+		align-items: center;
+	}
+
+	.topbar,
+	.page-intro {
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.brand-wrap,
+	.topbar nav {
+		display: inline-flex;
+		align-items: center;
+		gap: 22px;
+	}
+
+	.brand-wrap {
+		gap: 12px;
+		color: var(--text);
+		font-weight: 800;
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark {
+		display: grid;
+		width: 42px;
+		height: 42px;
+		place-items: center;
+		border-radius: 14px;
+		background: linear-gradient(135deg, var(--primary), #eea368);
+		color: white;
+		box-shadow: var(--shadow);
+	}
+
+	.topbar nav a {
+		color: var(--primary-dark);
+		font-weight: 700;
+	}
+
+	.page-intro {
+		align-items: flex-end;
+		margin-top: 12vh;
+	}
+
+	.page-intro > div {
+		max-width: 700px;
+	}
+
+	.eyebrow,
+	.category-label {
+		margin: 0 0 12px;
+		color: var(--primary-dark);
+		font-size: 0.78rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	h1,
+	h2,
+	h3,
+	p {
+		margin-top: 0;
+	}
+
+	h1 {
+		margin-bottom: 18px;
+		font-size: clamp(2.6rem, 6vw, 4.8rem);
+		line-height: 0.98;
+		letter-spacing: -0.07em;
+	}
+
+	.page-intro p:last-child,
+	.publication-content p,
+	.empty-state p {
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 13px 18px;
+		border-radius: 12px;
+		font-weight: 800;
+		white-space: nowrap;
+	}
+
+	.btn-primary {
+		background: var(--primary);
+		color: white;
+	}
+
+	.btn-secondary {
+		border: 1px solid rgba(217, 109, 93, 0.25);
+		background: white;
+		color: var(--primary-dark);
+	}
+
+	.summary {
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-top: 52px;
+	}
+
+	.summary div {
+		display: grid;
+		min-width: 170px;
+		gap: 4px;
+		padding: 18px 22px;
+		border: 1px solid var(--line);
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.72);
+	}
+
+	.summary strong {
+		color: var(--primary-dark);
+		font-size: 1.3rem;
+	}
+
+	.summary span {
+		color: var(--muted);
+		font-size: 0.8rem;
+	}
+
+	.listing-section {
+		margin-top: 70px;
+	}
+
+	.section-heading h2 {
+		margin-bottom: 24px;
+		font-size: clamp(1.8rem, 4vw, 2.8rem);
+		letter-spacing: -0.05em;
+	}
+
+	.publication-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 18px;
+	}
+
+	.publication-card {
+		overflow: hidden;
+		border: 1px solid rgba(217, 109, 93, 0.14);
+		border-radius: 22px;
+		background: white;
+		box-shadow: var(--shadow);
+	}
+
+	.publication-art {
+		display: grid;
+		height: 170px;
+		place-items: center;
+		background: linear-gradient(145deg, #fff0df, #f7cb82);
+		font-size: 5rem;
+	}
+
+	.publication-content {
+		padding: 20px;
+	}
+
+	.category-label {
+		margin-bottom: 8px;
+		font-size: 0.68rem;
+	}
+
+	.publication-content h3 {
+		margin-bottom: 8px;
+		font-size: 1.25rem;
+	}
+
+	.publication-content p {
+		min-height: 52px;
+		margin-bottom: 20px;
+		font-size: 0.88rem;
+	}
+
+	.card-footer {
+		justify-content: space-between;
+		gap: 12px;
+		padding-top: 16px;
+		border-top: 1px solid var(--line);
+	}
+
+	.card-footer strong {
+		color: var(--primary-dark);
+	}
+
+	.card-footer span {
+		color: var(--muted);
+		font-size: 0.72rem;
+		text-align: right;
+	}
+
+	.empty-state {
+		display: grid;
+		justify-items: center;
+		padding: 54px 24px;
+		border: 1px dashed rgba(217, 109, 93, 0.32);
+		border-radius: 22px;
+		text-align: center;
+	}
+
+	.empty-state[hidden] {
+		display: none;
+	}
+
+	.empty-icon {
+		display: grid;
+		width: 52px;
+		height: 52px;
+		place-items: center;
+		margin-bottom: 14px;
+		border-radius: 16px;
+		background: var(--panel-soft);
+		color: var(--primary);
+		font-size: 1.5rem;
+	}
+
+	.empty-state h3 {
+		margin-bottom: 8px;
+	}
+
+	.empty-state p {
+		max-width: 420px;
+		margin-bottom: 20px;
+	}
+
+	.page-feedback {
+		min-height: 24px;
+		margin-top: 18px;
+		color: #28734e;
+		font-size: 0.88rem;
+		font-weight: 700;
+	}
+
+	@media (max-width: 780px) {
+		.page-intro {
+			align-items: flex-start;
+			flex-direction: column;
+			margin-top: 8vh;
+		}
+
+		.publication-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 500px) {
+		.topbar {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.publication-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
