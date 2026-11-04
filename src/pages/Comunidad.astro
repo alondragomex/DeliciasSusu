@@ -1,0 +1,354 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const initialComments = [
+	{ name: 'María R.', date: 'Hace 2 días', text: 'El pastel de chocolate fue el protagonista de nuestra celebración. ¡Delicioso!' },
+	{ name: 'Daniela G.', date: 'Hace 4 días', text: 'Me encantó la presentación y la atención. Todo llegó perfecto.' },
+	{ name: 'Jorge M.', date: 'Hace 1 semana', text: 'Los cupcakes surtidos son ideales para compartir en familia.' },
+];
+---
+
+<Layout>
+	<main class="community-shell">
+		<header class="topbar">
+			<a class="brand-wrap" href="/Landing" aria-label="Volver al inicio de Delicias Susu">
+				<span class="brand-mark">D</span>
+				<span>Delicias Susu</span>
+			</a>
+			<nav aria-label="Navegación de comunidad">
+				<a href="/Catalogo">Catálogo</a>
+				<a href="/Perfil">Mi perfil</a>
+			</nav>
+		</header>
+
+		<section class="community-hero" aria-labelledby="community-title">
+			<div>
+				<p class="eyebrow">Comunidad Delicias Susu</p>
+				<h1>Comparte tu momento más dulce.</h1>
+				<p class="hero-copy">Lee las experiencias de otros clientes y deja un comentario para formar parte de nuestra comunidad.</p>
+			</div>
+			<div class="community-mark" aria-hidden="true">♡</div>
+		</section>
+
+		<section class="community-layout">
+			<div class="comments-column">
+				<div class="section-heading">
+					<p class="eyebrow">Experiencias reales</p>
+					<h2 id="community-title">Lo que comparte nuestra comunidad</h2>
+				</div>
+				<div class="comments-list" id="comments-list">
+					{initialComments.map((comment) => (
+						<article class="comment-card">
+							<div class="comment-avatar" aria-hidden="true">{comment.name.slice(0, 1)}</div>
+							<div>
+								<div class="comment-meta"><strong>{comment.name}</strong><span>{comment.date}</span></div>
+								<p>{comment.text}</p>
+							</div>
+						</article>
+					))}
+				</div>
+			</div>
+
+			<aside class="comment-form-card">
+				<p class="eyebrow">Tu opinión cuenta</p>
+				<h2>Deja un comentario</h2>
+				<p>Cuéntanos qué producto disfrutaste o qué momento celebraste con nosotros.</p>
+				<form id="comment-form">
+					<label for="comment-name">Tu nombre</label>
+					<input id="comment-name" name="name" type="text" placeholder="Ej. Ana L." required />
+					<label for="comment-text">Comentario</label>
+					<textarea id="comment-text" name="comment" rows="5" placeholder="Escribe tu experiencia..." required></textarea>
+					<button class="btn btn-primary" type="submit">Publicar comentario <span aria-hidden="true">→</span></button>
+					<p class="form-feedback" id="comment-feedback" role="status" aria-live="polite"></p>
+				</form>
+			</aside>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	const form = document.querySelector<HTMLFormElement>('#comment-form');
+	const nameInput = document.querySelector<HTMLInputElement>('#comment-name');
+	const textInput = document.querySelector<HTMLTextAreaElement>('#comment-text');
+	const commentsList = document.querySelector<HTMLElement>('#comments-list');
+	const feedback = document.querySelector<HTMLElement>('#comment-feedback');
+
+	form?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		const name = nameInput?.value.trim() ?? '';
+		const text = textInput?.value.trim() ?? '';
+		if (!name || !text || !commentsList || !feedback) return;
+
+		const article = document.createElement('article');
+		article.className = 'comment-card new-comment';
+		const avatar = document.createElement('div');
+		avatar.className = 'comment-avatar';
+		avatar.setAttribute('aria-hidden', 'true');
+		avatar.textContent = name.charAt(0).toUpperCase();
+		const content = document.createElement('div');
+		const meta = document.createElement('div');
+		meta.className = 'comment-meta';
+		const author = document.createElement('strong');
+		author.textContent = name;
+		const date = document.createElement('span');
+		date.textContent = 'Justo ahora';
+		meta.append(author, date);
+		const comment = document.createElement('p');
+		comment.textContent = text;
+		content.append(meta, comment);
+		article.append(avatar, content);
+		commentsList.prepend(article);
+		form.reset();
+		feedback.textContent = 'Comentario publicado (simulado).';
+	});
+</script>
+
+<style>
+	.community-shell {
+		max-width: 1160px;
+		min-height: 100vh;
+		margin: 0 auto;
+		padding: 24px 20px 64px;
+	}
+
+	.topbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.brand-wrap,
+	.topbar nav {
+		display: inline-flex;
+		align-items: center;
+		gap: 22px;
+	}
+
+	.brand-wrap {
+		gap: 12px;
+		color: var(--text);
+		font-weight: 800;
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark,
+	.community-mark,
+	.comment-avatar {
+		display: grid;
+		place-items: center;
+		background: linear-gradient(135deg, var(--primary), #eea368);
+		color: white;
+		box-shadow: var(--shadow);
+	}
+
+	.brand-mark {
+		width: 42px;
+		height: 42px;
+		border-radius: 14px;
+	}
+
+	.topbar nav a {
+		color: var(--primary-dark);
+		font-weight: 700;
+	}
+
+	.community-hero {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 40px;
+		margin-top: 12vh;
+	}
+
+	.eyebrow {
+		margin: 0 0 12px;
+		color: var(--primary-dark);
+		font-size: 0.78rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	h1,
+	h2,
+	p {
+		margin-top: 0;
+	}
+
+	h1 {
+		max-width: 700px;
+		margin-bottom: 18px;
+		font-size: clamp(2.5rem, 6vw, 4.7rem);
+		line-height: 0.98;
+		letter-spacing: -0.07em;
+	}
+
+	.hero-copy,
+	.comment-form-card > p,
+	.comment-card p {
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	.hero-copy {
+		max-width: 620px;
+		font-size: 1.05rem;
+	}
+
+	.community-mark {
+		width: 160px;
+		height: 160px;
+		flex: 0 0 auto;
+		border-radius: 48px;
+		background: var(--secondary);
+		color: var(--primary-dark);
+		font-size: 6rem;
+		transform: rotate(7deg);
+	}
+
+	.community-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(300px, 0.62fr);
+		gap: 44px;
+		margin-top: 76px;
+	}
+
+	.section-heading h2 {
+		margin-bottom: 24px;
+		font-size: clamp(1.7rem, 4vw, 2.7rem);
+		letter-spacing: -0.05em;
+	}
+
+	.comments-list {
+		display: grid;
+		gap: 12px;
+	}
+
+	.comment-card {
+		display: grid;
+		grid-template-columns: 42px 1fr;
+		gap: 14px;
+		padding: 20px;
+		border: 1px solid var(--line);
+		border-radius: 18px;
+		background: rgba(255, 255, 255, 0.8);
+	}
+
+	.comment-avatar {
+		width: 42px;
+		height: 42px;
+		border-radius: 14px;
+		font-weight: 800;
+	}
+
+	.comment-meta {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.comment-meta span {
+		color: var(--muted);
+		font-size: 0.8rem;
+	}
+
+	.comment-card p {
+		margin: 8px 0 0;
+		font-size: 0.92rem;
+	}
+
+	.new-comment {
+		border-color: rgba(217, 109, 93, 0.35);
+	}
+
+	.comment-form-card {
+		align-self: start;
+		padding: 28px;
+		border-radius: 24px;
+		background: linear-gradient(145deg, #fff0df, #fffaf6);
+		box-shadow: var(--shadow);
+	}
+
+	.comment-form-card h2 {
+		margin-bottom: 10px;
+		font-size: 1.7rem;
+	}
+
+	.comment-form-card > p:not(.eyebrow) {
+		margin-bottom: 24px;
+		font-size: 0.92rem;
+	}
+
+	form {
+		display: grid;
+		gap: 8px;
+	}
+
+	label {
+		margin-top: 6px;
+		font-size: 0.8rem;
+		font-weight: 800;
+	}
+
+	input,
+	textarea {
+		width: 100%;
+		padding: 12px 14px;
+		border: 1px solid rgba(46, 34, 31, 0.15);
+		border-radius: 12px;
+		background: white;
+		color: var(--text);
+		font: inherit;
+		resize: vertical;
+	}
+
+	.btn {
+		margin-top: 10px;
+		padding: 13px 18px;
+		border: 0;
+		border-radius: 12px;
+		font: inherit;
+		font-weight: 800;
+		cursor: pointer;
+	}
+
+	.btn-primary {
+		background: var(--primary);
+		color: white;
+	}
+
+	.form-feedback {
+		min-height: 22px;
+		margin: 6px 0 0 !important;
+		color: #28734e !important;
+		font-size: 0.85rem;
+		font-weight: 700;
+	}
+
+	@media (max-width: 780px) {
+		.community-hero,
+		.community-layout {
+			display: grid;
+			grid-template-columns: 1fr;
+		}
+
+		.community-hero {
+			margin-top: 8vh;
+		}
+
+		.community-mark {
+			width: 110px;
+			height: 110px;
+			font-size: 4rem;
+		}
+	}
+
+	@media (max-width: 500px) {
+		.topbar {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+	}
+</style>
