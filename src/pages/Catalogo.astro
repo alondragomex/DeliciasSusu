@@ -219,6 +219,15 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 					<h2>¡Gracias por tu compra!</h2>
 					<p>Preparamos tu pedido con mucho cariño. Recibirás la confirmación en tu correo.</p>
 					<strong id="confirmation-order"></strong>
+					<div class="receipt-card" aria-label="Ticket de compra">
+						<div class="receipt-heading"><span>Delicias Susu</span><strong>Ticket de compra</strong></div>
+						<div class="receipt-row"><span>Cliente</span><strong id="receipt-customer">-</strong></div>
+						<div class="receipt-row"><span>Método de pago</span><strong id="receipt-payment">-</strong></div>
+						<div class="receipt-row"><span>Entrega</span><strong id="receipt-delivery">-</strong></div>
+						<div class="receipt-total"><span>Total pagado</span><strong id="receipt-total">$0 MXN</strong></div>
+					</div>
+					<button class="receipt-button" id="print-receipt" type="button">Imprimir ticket (simulado)</button>
+					<p class="receipt-feedback" id="receipt-feedback" role="status" aria-live="polite"></p>
 					<a class="btn btn-primary" href="/Perfil">Ver mi perfil</a>
 				</div>
 			</section>
@@ -265,6 +274,11 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	const checkoutError = document.querySelector<HTMLElement>('#checkout-error');
 	const purchaseConfirmation = document.querySelector<HTMLElement>('#purchase-confirmation');
 	const confirmationOrder = document.querySelector<HTMLElement>('#confirmation-order');
+	const receiptCustomer = document.querySelector<HTMLElement>('#receipt-customer');
+	const receiptPayment = document.querySelector<HTMLElement>('#receipt-payment');
+	const receiptDelivery = document.querySelector<HTMLElement>('#receipt-delivery');
+	const receiptTotal = document.querySelector<HTMLElement>('#receipt-total');
+	const receiptFeedback = document.querySelector<HTMLElement>('#receipt-feedback');
 	const paymentOptions = document.querySelectorAll<HTMLElement>('.payment-option');
 	type CartItem = { name: string; price: number; originalPrice: number; isOffer: boolean; icon: string; quantity: number };
 	let selectedCategory = 'Todos';
@@ -413,6 +427,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		const email = String(form.get('email') ?? '').trim();
 		const address = String(form.get('address') ?? '').trim();
 		const payment = String(form.get('payment') ?? '').trim();
+		const delivery = String(form.get('delivery') ?? '').trim();
 		if (!name || !email || !address || !email.includes('@') || !payment) {
 			if (checkoutError) checkoutError.textContent = 'Completa tus datos y selecciona un método de pago para continuar.';
 			return;
@@ -425,7 +440,14 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		checkoutForm.hidden = true;
 		if (checkoutError) checkoutError.textContent = '';
 		if (confirmationOrder) confirmationOrder.textContent = `Número de pedido: ${orderNumber}`;
+		if (receiptCustomer) receiptCustomer.textContent = name;
+		if (receiptPayment) receiptPayment.textContent = payment;
+		if (receiptDelivery) receiptDelivery.textContent = delivery;
+		if (receiptTotal) receiptTotal.textContent = checkoutTotal?.textContent ?? '$0 MXN';
 		if (purchaseConfirmation) purchaseConfirmation.hidden = false;
+	});
+	document.querySelector<HTMLButtonElement>('#print-receipt')?.addEventListener('click', () => {
+		if (receiptFeedback) receiptFeedback.textContent = 'Ticket listo para imprimir (simulado).';
 	});
 	paymentOptions.forEach((option) => option.querySelector<HTMLInputElement>('input')?.addEventListener('change', () => {
 		paymentOptions.forEach((item) => item.classList.remove('selected'));
@@ -569,6 +591,17 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.purchase-confirmation h2 { margin: 0; font-size: 2rem; }
 	.purchase-confirmation p:not(.eyebrow) { max-width: 420px; margin: 0; color: var(--muted); line-height: 1.6; }
 	.purchase-confirmation strong { color: var(--primary-dark); }
+	.receipt-card { width: min(100%, 430px); margin: 10px 0 2px; padding: 18px; border: 1px dashed rgba(217, 109, 93, 0.4); border-radius: 14px; background: #fffaf7; text-align: left; }
+	.receipt-heading, .receipt-row, .receipt-total { display: flex; justify-content: space-between; gap: 16px; }
+	.receipt-heading { padding-bottom: 12px; border-bottom: 1px solid var(--line); color: var(--primary-dark); }
+	.receipt-heading span { font-weight: 800; }
+	.receipt-heading strong { font-size: 0.8rem; }
+	.receipt-row { padding-top: 10px; color: var(--muted); font-size: 0.78rem; }
+	.receipt-row strong { color: var(--text); font-size: 0.78rem; text-align: right; }
+	.receipt-total { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--text); font-weight: 800; }
+	.receipt-total strong { font-size: 1.1rem; }
+	.receipt-button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: white; color: var(--primary-dark); font: inherit; font-size: 0.8rem; font-weight: 800; cursor: pointer; }
+	.receipt-feedback { min-height: 20px; color: #28734e !important; font-size: 0.8rem; font-weight: 700; }
 	.empty-state { margin: 28px 0 0; color: var(--muted); text-align: center; }
 	.catalog-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 38px 42px; border-radius: 24px; background: linear-gradient(120deg, #fff0e9, #fff9e7); }
 	.catalog-footer h2 { margin: 0; font-size: clamp(1.7rem, 3vw, 2.4rem); letter-spacing: -0.04em; }
