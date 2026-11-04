@@ -1,0 +1,420 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="auction-shell">
+		<header class="topbar">
+			<a class="brand-wrap" href="/Landing" aria-label="Volver al inicio de Delicias Susu">
+				<span class="brand-mark">D</span>
+				<span>Delicias Susu</span>
+			</a>
+			<nav aria-label="Navegación de subasta">
+				<a href="/Catalogo">Catálogo</a>
+				<a href="/Perfil">Mi perfil</a>
+			</nav>
+		</header>
+
+		<section class="auction-intro" aria-labelledby="auction-title">
+			<div>
+				<p class="eyebrow">Dinámica de la comunidad</p>
+				<h1 id="auction-title">Subasta dulce</h1>
+				<p>Participa en una experiencia de ofertas simulada y consigue un producto especial para compartir.</p>
+			</div>
+			<span class="live-badge"><i aria-hidden="true"></i> En vivo</span>
+		</section>
+
+		<section class="auction-layout">
+			<article class="auction-product">
+				<div class="product-art" aria-hidden="true">🎂</div>
+				<div class="product-content">
+					<p class="category-label">Producto en subasta</p>
+					<h2>Pastel artesanal de frutos rojos</h2>
+					<p>Pastel de vainilla, crema ligera y frutos rojos frescos. Una pieza especial preparada para celebrar.</p>
+					<div class="product-details">
+						<span><strong>8</strong> participantes</span>
+						<span><strong>24 cm</strong> de tamaño</span>
+						<span><strong>Entrega</strong> incluida</span>
+					</div>
+				</div>
+			</article>
+
+			<aside class="bid-panel" aria-labelledby="bid-title">
+				<div class="timer-label"><span>La subasta termina en</span><strong id="auction-timer">04:59</strong></div>
+				<div class="current-bid">
+					<span>Oferta actual</span>
+					<strong id="current-bid">$380 <small>MXN</small></strong>
+				</div>
+				<form id="bid-form">
+					<label for="bid-amount">Haz tu oferta</label>
+					<div class="bid-input">
+						<span>$</span>
+						<input id="bid-amount" type="number" min="381" step="1" placeholder="Ej. 400" required />
+						<span>MXN</span>
+					</div>
+					<p class="minimum-bid">La oferta mínima es de $381 MXN.</p>
+					<button class="btn btn-primary" type="submit">Ofertar ahora <span aria-hidden="true">→</span></button>
+					<p class="bid-feedback" id="bid-feedback" role="status" aria-live="polite"></p>
+				</form>
+			</aside>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	const timer = document.querySelector<HTMLElement>('#auction-timer');
+	const bidForm = document.querySelector<HTMLFormElement>('#bid-form');
+	const bidInput = document.querySelector<HTMLInputElement>('#bid-amount');
+	const currentBid = document.querySelector<HTMLElement>('#current-bid');
+	const feedback = document.querySelector<HTMLElement>('#bid-feedback');
+	let remainingSeconds = 299;
+
+	const renderTimer = () => {
+		if (!timer) return;
+		const minutes = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+		const seconds = (remainingSeconds % 60).toString().padStart(2, '0');
+		timer.textContent = `${minutes}:${seconds}`;
+	};
+
+	const timerInterval = window.setInterval(() => {
+		if (remainingSeconds <= 0) {
+			window.clearInterval(timerInterval);
+			if (timer) timer.textContent = '00:00';
+			return;
+		}
+		remainingSeconds -= 1;
+		renderTimer();
+	}, 1000);
+
+	bidForm?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		const amount = Number(bidInput?.value ?? 0);
+		const minimum = Number(currentBid?.dataset.amount ?? 380) + 1;
+		if (!feedback || !currentBid) return;
+		if (amount < minimum) {
+			feedback.textContent = `La oferta debe ser de al menos $${minimum} MXN.`;
+			feedback.className = 'bid-feedback error';
+			return;
+		}
+		currentBid.dataset.amount = String(amount);
+		currentBid.replaceChildren(document.createTextNode(`$${amount} `));
+		const currency = document.createElement('small');
+		currency.textContent = 'MXN';
+		currentBid.append(currency);
+		feedback.textContent = 'Oferta registrada (simulado).';
+		feedback.className = 'bid-feedback success';
+		bidForm.reset();
+	});
+
+	renderTimer();
+</script>
+
+<style>
+	.auction-shell {
+		max-width: 1160px;
+		min-height: 100vh;
+		margin: 0 auto;
+		padding: 24px 20px 64px;
+	}
+
+	.topbar,
+	.auction-intro {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.brand-wrap,
+	.topbar nav {
+		display: inline-flex;
+		align-items: center;
+		gap: 22px;
+	}
+
+	.brand-wrap {
+		gap: 12px;
+		color: var(--text);
+		font-weight: 800;
+		letter-spacing: 0.02em;
+	}
+
+	.brand-mark {
+		display: grid;
+		width: 42px;
+		height: 42px;
+		place-items: center;
+		border-radius: 14px;
+		background: linear-gradient(135deg, var(--primary), #eea368);
+		color: white;
+		box-shadow: var(--shadow);
+	}
+
+	.topbar nav a {
+		color: var(--primary-dark);
+		font-weight: 700;
+	}
+
+	.auction-intro {
+		align-items: flex-end;
+		margin-top: 12vh;
+	}
+
+	.eyebrow,
+	.category-label {
+		margin: 0 0 12px;
+		color: var(--primary-dark);
+		font-size: 0.78rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	h1,
+	h2,
+	p {
+		margin-top: 0;
+	}
+
+	h1 {
+		margin-bottom: 18px;
+		font-size: clamp(2.6rem, 6vw, 4.8rem);
+		line-height: 0.98;
+		letter-spacing: -0.07em;
+	}
+
+	.auction-intro p:last-child,
+	.product-content > p,
+	.product-details,
+	.minimum-bid {
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	.auction-intro > div {
+		max-width: 700px;
+	}
+
+	.live-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 9px 13px;
+		border-radius: 999px;
+		background: #fff0ed;
+		color: var(--primary-dark);
+		font-size: 0.8rem;
+		font-weight: 800;
+	}
+
+	.live-badge i {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: #d65b50;
+		box-shadow: 0 0 0 4px rgba(214, 91, 80, 0.14);
+	}
+
+	.auction-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(300px, 0.62fr);
+		gap: 28px;
+		margin-top: 54px;
+	}
+
+	.auction-product,
+	.bid-panel {
+		border: 1px solid rgba(217, 109, 93, 0.14);
+		border-radius: 26px;
+		background: white;
+		box-shadow: var(--shadow);
+	}
+
+	.auction-product {
+		overflow: hidden;
+	}
+
+	.product-art {
+		display: grid;
+		height: 300px;
+		place-items: center;
+		background: linear-gradient(145deg, #fff0df, #f7cb82);
+		font-size: 8rem;
+	}
+
+	.product-content {
+		padding: 30px;
+	}
+
+	.product-content h2 {
+		margin-bottom: 12px;
+		font-size: clamp(1.7rem, 4vw, 2.5rem);
+		letter-spacing: -0.05em;
+	}
+
+	.product-content > p {
+		max-width: 580px;
+		margin-bottom: 24px;
+	}
+
+	.product-details {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 18px;
+		padding-top: 18px;
+		border-top: 1px solid var(--line);
+		font-size: 0.82rem;
+	}
+
+	.product-details strong {
+		display: block;
+		color: var(--text);
+		font-size: 1rem;
+	}
+
+	.bid-panel {
+		align-self: start;
+		padding: 28px;
+		background: linear-gradient(145deg, #fff0df, #fffaf6);
+	}
+
+	.timer-label,
+	.current-bid {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.timer-label {
+		padding-bottom: 18px;
+		border-bottom: 1px solid rgba(46, 34, 31, 0.1);
+		color: var(--muted);
+		font-size: 0.82rem;
+	}
+
+	.timer-label strong {
+		color: var(--primary-dark);
+		font-size: 1.3rem;
+	}
+
+	.current-bid {
+		align-items: flex-end;
+		padding: 28px 0;
+	}
+
+	.current-bid span {
+		color: var(--muted);
+		font-size: 0.85rem;
+	}
+
+	.current-bid strong {
+		color: var(--primary-dark);
+		font-size: 2rem;
+		letter-spacing: -0.05em;
+	}
+
+	.current-bid small {
+		font-size: 0.7rem;
+		letter-spacing: 0;
+	}
+
+	form {
+		display: grid;
+		gap: 8px;
+	}
+
+	label {
+		font-size: 0.82rem;
+		font-weight: 800;
+	}
+
+	.bid-input {
+		display: flex;
+		align-items: center;
+		border: 1px solid rgba(46, 34, 31, 0.15);
+		border-radius: 12px;
+		background: white;
+		color: var(--muted);
+	}
+
+	.bid-input input {
+		width: 100%;
+		min-width: 0;
+		padding: 13px 10px;
+		border: 0;
+		outline: 0;
+		color: var(--text);
+		font: inherit;
+	}
+
+	.bid-input span {
+		padding: 0 12px;
+		font-size: 0.8rem;
+		font-weight: 700;
+	}
+
+	.minimum-bid {
+		margin: 0;
+		font-size: 0.78rem;
+	}
+
+	.btn {
+		margin-top: 12px;
+		padding: 14px 18px;
+		border: 0;
+		border-radius: 12px;
+		font: inherit;
+		font-weight: 800;
+		cursor: pointer;
+	}
+
+	.btn-primary {
+		background: var(--primary);
+		color: white;
+	}
+
+	.bid-feedback {
+		min-height: 24px;
+		margin: 4px 0 0;
+		font-size: 0.85rem;
+		font-weight: 700;
+	}
+
+	.bid-feedback.success {
+		color: #28734e;
+	}
+
+	.bid-feedback.error {
+		color: var(--primary-dark);
+	}
+
+	@media (max-width: 780px) {
+		.auction-intro {
+			align-items: flex-start;
+			flex-direction: column;
+			margin-top: 8vh;
+		}
+
+		.auction-layout {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 500px) {
+		.topbar {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.product-art {
+			height: 220px;
+			font-size: 6rem;
+		}
+
+		.product-content,
+		.bid-panel {
+			padding: 22px;
+		}
+	}
+</style>
