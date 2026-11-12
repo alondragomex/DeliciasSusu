@@ -32,12 +32,12 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 
 				<label for="product-name">Nombre del producto</label>
-				<input id="product-name" name="name" type="text" placeholder="Ej. Caja de galletas caseras" required />
+				<input id="product-name" name="name" type="text" placeholder="Ej. Caja de galletas caseras" />
 
 				<div class="field-grid">
 					<div>
 						<label for="product-price">Precio</label>
-						<div class="price-input"><span>$</span><input id="product-price" name="price" type="number" min="1" step="1" placeholder="250" required /><span>MXN</span></div>
+						<div class="price-input"><span>$</span><input id="product-price" name="price" type="text" placeholder="250" /><span>MXN</span></div>
 					</div>
 					<div>
 						<label for="product-category">Categoría</label>
@@ -51,7 +51,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 
 				<label for="product-description">Descripción</label>
-				<textarea id="product-description" name="description" rows="5" placeholder="Describe tu producto, tamaño y presentación..." required></textarea>
+				<textarea id="product-description" name="description" rows="5" placeholder="Describe tu producto, tamaño y presentación..."></textarea>
 
 				<label for="product-photo">Foto del producto</label>
 				<div class="photo-input">
@@ -118,7 +118,7 @@ import Layout from '../layouts/Layout.astro';
 		const name = nameInput?.value.trim() ?? '';
 		const price = Number(priceInput?.value ?? 0);
 		const description = descriptionInput?.value.trim() ?? '';
-		if (!name || price <= 0 || !description || !feedback) return;
+		if (!feedback) return;
 
 		const product: PublishedProduct = {
 			id: `publication-${Date.now()}`,

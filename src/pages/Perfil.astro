@@ -28,11 +28,32 @@ import Layout from '../layouts/Layout.astro';
 				</section>
 				<section class="profile-section" id="purchase-history">
 					<h2>Mis compras</h2>
-					<p id="purchase-history-copy">Mis compras (próximamente).</p>
+					<p id="purchase-history-copy">Consulta tus pedidos confirmados y sus tickets.</p>
+					<a class="history-link" href="/Historial">Abrir historial de compras →</a>
 				</section>
 			</div>
+			<section class="account-dashboard" aria-labelledby="dashboard-title">
+				<div class="dashboard-heading">
+					<div><p class="eyebrow">Tu actividad</p><h2 id="dashboard-title">Mi espacio de usuario</h2></div>
+					<span class="account-status">Cuenta activa</span>
+				</div>
+				<div class="dashboard-grid">
+					<a class="dashboard-card" href="/MisPublicaciones"><span class="dashboard-icon">✦</span><strong>Mis publicaciones</strong><small><b id="publication-count">0</b> productos compartidos</small></a>
+					<a class="dashboard-card" href="/Publicar"><span class="dashboard-icon">+</span><strong>Publicar producto</strong><small>Vende a la comunidad</small></a>
+					<a class="dashboard-card" href="/Subasta"><span class="dashboard-icon">↗</span><strong>Mis ofertas</strong><small>Participa en subastas</small></a>
+					<a class="dashboard-card" href="/Subasta"><span class="dashboard-icon">⚑</span><strong>Subasta activa</strong><small id="profile-auction-copy">Consulta y oferta ahora</small></a>
+					<a class="dashboard-card" href="/Comunidad"><span class="dashboard-icon">♡</span><strong>Comunidad</strong><small>Comparte tu experiencia</small></a>
+					<a class="dashboard-card" href="/Historial"><span class="dashboard-icon">▤</span><strong>Historial de compras</strong><small>Consulta tus facturas y pedidos</small></a>
+				</div>
+				<div class="order-summary" id="order-summary">
+					<div><span>Último pedido</span><strong id="order-number">Sin pedidos todavía</strong></div>
+					<div><span>Método de pago</span><strong id="order-payment">-</strong></div>
+					<div><span>Entrega</span><strong id="order-delivery">-</strong></div>
+					<div><span>Total</span><strong id="order-total">$0 MXN</strong></div>
+				</div>
+			</section>
 			<div class="profile-actions">
-				<a class="btn btn-primary" href="/Landing#productos">Ver productos</a>
+				<a class="btn btn-primary" href="/Catalogo">Ver productos</a>
 				<a class="btn btn-secondary" href="/Login">Cerrar sesion</a>
 			</div>
 		</section>
@@ -41,14 +62,28 @@ import Layout from '../layouts/Layout.astro';
 
 <script>
 	const savedUser = JSON.parse(localStorage.getItem('delicias-user') ?? 'null') as { name?: string; email?: string } | null;
-	const lastOrder = JSON.parse(localStorage.getItem('delicias-last-order') ?? 'null') as { orderNumber?: string; total?: string } | null;
+	const lastOrder = JSON.parse(localStorage.getItem('delicias-last-order') ?? 'null') as { orderNumber?: string; total?: string; payment?: string; delivery?: string } | null;
+	const publications = JSON.parse(localStorage.getItem('delicias-publications') ?? '[]') as unknown[];
+	const auction = JSON.parse(localStorage.getItem('delicias-auction') ?? 'null') as { title?: string; price?: number } | null;
 	const profileName = document.querySelector<HTMLElement>('#profile-name');
 	const profileEmail = document.querySelector<HTMLElement>('#profile-email');
 	const purchaseHistoryCopy = document.querySelector<HTMLElement>('#purchase-history-copy');
+	const publicationCount = document.querySelector<HTMLElement>('#publication-count');
+	const orderNumber = document.querySelector<HTMLElement>('#order-number');
+	const orderPayment = document.querySelector<HTMLElement>('#order-payment');
+	const orderDelivery = document.querySelector<HTMLElement>('#order-delivery');
+	const orderTotal = document.querySelector<HTMLElement>('#order-total');
+	const profileAuctionCopy = document.querySelector<HTMLElement>('#profile-auction-copy');
 	const logoutLink = document.querySelector<HTMLAnchorElement>('.profile-actions .btn-secondary');
 	if (savedUser?.name && profileName) profileName.textContent = savedUser.name;
 	if (savedUser?.email && profileEmail) profileEmail.textContent = savedUser.email;
 	if (lastOrder?.orderNumber && purchaseHistoryCopy) purchaseHistoryCopy.textContent = `${lastOrder.orderNumber} · ${lastOrder.total ?? 'Pedido confirmado'}`;
+	if (publicationCount) publicationCount.textContent = String(publications.length);
+	if (lastOrder?.orderNumber && orderNumber) orderNumber.textContent = lastOrder.orderNumber;
+	if (lastOrder?.payment && orderPayment) orderPayment.textContent = lastOrder.payment;
+	if (lastOrder?.delivery && orderDelivery) orderDelivery.textContent = lastOrder.delivery;
+	if (lastOrder?.total && orderTotal) orderTotal.textContent = lastOrder.total;
+	if (auction?.title && profileAuctionCopy) profileAuctionCopy.textContent = `${auction.title} · $${auction.price ?? 0} MXN`;
 	logoutLink?.addEventListener('click', () => localStorage.removeItem('delicias-session'));
 </script>
 
@@ -180,6 +215,119 @@ import Layout from '../layouts/Layout.astro';
 		line-height: 1.5;
 	}
 
+	.history-link {
+		display: inline-block;
+		margin-top: 12px;
+		color: var(--primary-dark);
+		font-size: 0.86rem;
+		font-weight: 800;
+	}
+
+	.account-dashboard {
+		margin-top: 28px;
+		padding: 22px;
+		border: 1px solid rgba(217, 109, 93, 0.14);
+		border-radius: 20px;
+		background: linear-gradient(145deg, #fff0df, #fffaf6);
+		text-align: left;
+	}
+
+	.dashboard-heading {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.dashboard-heading .eyebrow {
+		margin-bottom: 6px;
+	}
+
+	.dashboard-heading h2 {
+		margin: 0;
+		font-size: 1.35rem;
+	}
+
+	.account-status {
+		padding: 6px 9px;
+		border-radius: 999px;
+		background: #e4f4e9;
+		color: #47815b;
+		font-size: 0.68rem;
+		font-weight: 800;
+		white-space: nowrap;
+	}
+
+	.dashboard-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 9px;
+		margin-top: 18px;
+	}
+
+	.dashboard-card {
+		display: grid;
+		gap: 5px;
+		padding: 13px;
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.78);
+		color: var(--text);
+	}
+
+	.dashboard-card:hover {
+		border-color: rgba(217, 109, 93, 0.4);
+	}
+
+	.dashboard-icon {
+		display: grid;
+		width: 28px;
+		height: 28px;
+		place-items: center;
+		border-radius: 9px;
+		background: var(--panel-soft);
+		color: var(--primary-dark);
+		font-weight: 800;
+	}
+
+	.dashboard-card strong {
+		font-size: 0.78rem;
+	}
+
+	.dashboard-card small {
+		color: var(--muted);
+		font-size: 0.68rem;
+		line-height: 1.4;
+	}
+
+	.dashboard-card small b {
+		color: var(--primary-dark);
+	}
+
+	.order-summary {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 10px;
+		margin-top: 18px;
+		padding-top: 17px;
+		border-top: 1px solid var(--line);
+	}
+
+	.order-summary div {
+		display: grid;
+		gap: 4px;
+	}
+
+	.order-summary span {
+		color: var(--muted);
+		font-size: 0.68rem;
+	}
+
+	.order-summary strong {
+		font-size: 0.76rem;
+		word-break: break-word;
+	}
+
 	.profile-actions {
 		display: flex;
 		justify-content: center;
@@ -221,6 +369,11 @@ import Layout from '../layouts/Layout.astro';
 
 		.profile-sections {
 			grid-template-columns: 1fr;
+		}
+
+		.dashboard-grid,
+		.order-summary {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 </style>

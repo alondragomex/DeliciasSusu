@@ -133,11 +133,16 @@ import Layout from '../layouts/Layout.astro';
 			<p class="admin-notification" id="admin-notification" role="status" aria-live="polite" hidden></p>
 
 			<section class="panel promotions-panel" id="promociones" aria-labelledby="promotions-title">
-				<div class="panel-heading"><div><p class="eyebrow">Ventas especiales</p><h2 id="promotions-title">Promociones activas</h2></div><a class="round-link" href="#nueva-promocion" aria-label="Agregar promoción">+</a></div>
-				<div class="promotion-list">
-					<div class="promotion-item"><span class="promotion-icon">%</span><div><strong>15% en cajas para regalar</strong><small>Vigente hasta el 30 de junio</small></div><span class="promotion-status">Activa</span></div>
-					<div class="promotion-item"><span class="promotion-icon yellow">✦</span><div><strong>Envío gratis en pedidos mayores a $800</strong><small>Aplicada automáticamente</small></div><span class="promotion-status">Activa</span></div>
-				</div>
+				<div class="panel-heading"><div><p class="eyebrow">Ventas especiales</p><h2 id="promotions-title">Promociones activas</h2></div><button class="round-link" id="add-promotion" type="button" aria-label="Agregar promoción">+</button></div>
+				<div class="promotion-list" id="promotion-list"></div>
+				<form class="promotion-form" id="promotion-form" hidden>
+					<div class="promotion-form-heading"><strong id="promotion-form-title">Nueva promoción</strong><button class="close-promotion-form" id="cancel-promotion" type="button" aria-label="Cancelar">×</button></div>
+					<label>Nombre de la promoción<input id="promotion-name" type="text" placeholder="Ej. 15% en cajas para regalar" /></label>
+					<label>Vigencia o condición<input id="promotion-detail" type="text" placeholder="Ej. Vigente hasta el 30 de junio" /></label>
+					<label>Cupón para clientes<input id="promotion-code" type="text" placeholder="Ej. DULCE15" /></label>
+					<div class="promotion-form-actions"><button class="btn form-cancel" id="cancel-promotion-action" type="button">Cancelar</button><button class="btn btn-primary" type="submit">Guardar promoción</button></div>
+				</form>
+				<p class="promotion-feedback" id="promotion-feedback" role="status" aria-live="polite"></p>
 			</section>
 
 			<section class="panel auctions-panel" id="subastas" aria-labelledby="auctions-title">
@@ -149,10 +154,17 @@ import Layout from '../layouts/Layout.astro';
 						<h3>Pastel de frutos rojos personalizado</h3>
 						<p>Oferta por tiempo limitado para una creación artesanal de tamaño familiar.</p>
 						<div class="auction-stats"><div><small>Oferta actual</small><strong id="auction-price">$850 MXN</strong></div><div><small>Termina en</small><strong>02:18:40</strong></div><div><small>Participantes</small><strong id="auction-bidders">7</strong></div></div>
-						<div class="auction-actions"><label for="auction-bid">Tu oferta<input id="auction-bid" type="number" min="851" step="10" placeholder="$860" /></label><button class="btn btn-primary" id="place-bid" type="button">Ofertar</button></div>
+						<div class="auction-actions"><label for="auction-bid">Tu oferta<input id="auction-bid" type="text" placeholder="$860" /></label><button class="btn btn-primary" id="place-bid" type="button">Ofertar</button></div>
 						<p class="auction-feedback" id="auction-feedback" role="status" aria-live="polite"></p>
 					</div>
 				</div>
+				<form class="auction-edit-form" id="auction-edit-form" hidden>
+					<label>Título<input id="admin-auction-title" type="text" /></label>
+					<label>Descripción<input id="admin-auction-description" type="text" /></label>
+					<label>Oferta inicial<input id="admin-auction-price" type="text" /></label>
+					<button class="btn btn-primary" type="submit">Guardar subasta</button>
+				</form>
+				<button class="table-action" id="edit-auction" type="button">Editar subasta</button>
 			</section>
 		</section>
 	</main>
@@ -174,7 +186,92 @@ import Layout from '../layouts/Layout.astro';
 	const auctionPrice = document.querySelector<HTMLElement>('#auction-price');
 	const auctionBidders = document.querySelector<HTMLElement>('#auction-bidders');
 	const auctionFeedback = document.querySelector<HTMLElement>('#auction-feedback');
+	const auctionEditForm = document.querySelector<HTMLFormElement>('#auction-edit-form');
+	const adminAuctionTitle = document.querySelector<HTMLInputElement>('#admin-auction-title');
+	const adminAuctionDescription = document.querySelector<HTMLInputElement>('#admin-auction-description');
+	const adminAuctionPrice = document.querySelector<HTMLInputElement>('#admin-auction-price');
+	const savedAuction = JSON.parse(localStorage.getItem('delicias-auction') ?? 'null') as { title?: string; description?: string; price?: number } | null;
+	const promotionList = document.querySelector<HTMLElement>('#promotion-list');
+	const promotionForm = document.querySelector<HTMLFormElement>('#promotion-form');
+	const promotionFormTitle = document.querySelector<HTMLElement>('#promotion-form-title');
+	const promotionName = document.querySelector<HTMLInputElement>('#promotion-name');
+	const promotionDetail = document.querySelector<HTMLInputElement>('#promotion-detail');
+	const promotionCode = document.querySelector<HTMLInputElement>('#promotion-code');
+	const promotionFeedback = document.querySelector<HTMLElement>('#promotion-feedback');
+	let editingPromotionId: string | null = null;
 	let editingProduct: HTMLTableRowElement | null = null;
+
+	type Promotion = { id: string; name: string; detail: string; code?: string };
+	const defaultPromotions: Promotion[] = [
+		{ id: 'promotion-gift-boxes', name: '15% en cajas para regalar', detail: 'Vigente hasta el 30 de junio', code: 'DULCE15' },
+		{ id: 'promotion-free-shipping', name: 'Envío gratis en pedidos mayores a $800', detail: 'Aplicada automáticamente', code: 'ENVIO800' },
+	];
+	let promotions = JSON.parse(localStorage.getItem('delicias-promotions') ?? 'null') as Promotion[] | null;
+	if (!promotions) {
+		promotions = defaultPromotions;
+		localStorage.setItem('delicias-promotions', JSON.stringify(promotions));
+	}
+
+	const renderPromotions = () => {
+		if (!promotionList || !promotions) return;
+		promotionList.replaceChildren();
+		promotions.forEach((promotion, index) => {
+			const item = document.createElement('div');
+			item.className = 'promotion-item';
+			const icon = document.createElement('span');
+			icon.className = `promotion-icon${index % 2 ? ' yellow' : ''}`;
+			icon.textContent = index % 2 ? '✦' : '%';
+			const copy = document.createElement('div');
+			const title = document.createElement('strong');
+			title.textContent = promotion.name;
+			const detail = document.createElement('small');
+			detail.textContent = promotion.code ? `${promotion.detail} · Cupón: ${promotion.code}` : promotion.detail;
+			copy.append(title, detail);
+			const actions = document.createElement('div');
+			actions.className = 'promotion-actions';
+			const edit = document.createElement('button');
+			edit.className = 'promotion-action';
+			edit.type = 'button';
+			edit.textContent = 'Editar';
+			edit.addEventListener('click', () => openPromotionForm(promotion));
+			const remove = document.createElement('button');
+			remove.className = 'promotion-action delete';
+			remove.type = 'button';
+			remove.textContent = 'Eliminar';
+			remove.addEventListener('click', () => {
+				if (!window.confirm(`¿Eliminar "${promotion.name}"?`)) return;
+				promotions = promotions?.filter(({ id }) => id !== promotion.id) ?? [];
+				localStorage.setItem('delicias-promotions', JSON.stringify(promotions));
+				renderPromotions();
+				showPromotionFeedback('Promoción eliminada (simulado).');
+			});
+			actions.append(edit, remove);
+			item.append(icon, copy, actions);
+			promotionList.append(item);
+		});
+	};
+
+	const openPromotionForm = (promotion?: Promotion) => {
+		editingPromotionId = promotion?.id ?? null;
+		if (promotionFormTitle) promotionFormTitle.textContent = promotion ? 'Editar promoción' : 'Nueva promoción';
+		if (promotionName) promotionName.value = promotion?.name ?? '';
+		if (promotionDetail) promotionDetail.value = promotion?.detail ?? '';
+		if (promotionCode) promotionCode.value = promotion?.code ?? '';
+		if (promotionForm) promotionForm.hidden = false;
+		promotionName?.focus();
+	};
+
+	const closePromotionForm = () => {
+		editingPromotionId = null;
+		promotionForm?.reset();
+		if (promotionForm) promotionForm.hidden = true;
+	};
+
+	const showPromotionFeedback = (message: string) => {
+		if (!promotionFeedback) return;
+		promotionFeedback.textContent = message;
+		window.setTimeout(() => { promotionFeedback.textContent = ''; }, 2800);
+	};
 
 	const showAdminNotification = (message: string) => {
 		if (!adminNotification) return;
@@ -182,6 +279,31 @@ import Layout from '../layouts/Layout.astro';
 		adminNotification.hidden = false;
 		window.setTimeout(() => { adminNotification.hidden = true; }, 2800);
 	};
+
+	const auctionDefaults = {
+		title: savedAuction?.title ?? 'Pastel de frutos rojos personalizado',
+		description: savedAuction?.description ?? 'Oferta por tiempo limitado para una creación artesanal de tamaño familiar.',
+		price: savedAuction?.price ?? 850,
+	};
+	if (auctionPrice) auctionPrice.textContent = `$${auctionDefaults.price.toLocaleString('es-MX')} MXN`;
+	if (adminAuctionTitle) adminAuctionTitle.value = auctionDefaults.title;
+	if (adminAuctionDescription) adminAuctionDescription.value = auctionDefaults.description;
+	if (adminAuctionPrice) adminAuctionPrice.value = String(auctionDefaults.price);
+	document.querySelector<HTMLButtonElement>('#edit-auction')?.addEventListener('click', () => {
+		if (auctionEditForm) auctionEditForm.hidden = !auctionEditForm.hidden;
+	});
+	auctionEditForm?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		const auction = {
+			title: adminAuctionTitle?.value ?? '',
+			description: adminAuctionDescription?.value ?? '',
+			price: Number(adminAuctionPrice?.value ?? 0),
+		};
+		localStorage.setItem('delicias-auction', JSON.stringify(auction));
+		if (auctionPrice) auctionPrice.textContent = `$${auction.price.toLocaleString('es-MX')} MXN`;
+		if (auctionEditForm) auctionEditForm.hidden = true;
+		showAdminNotification('Subasta actualizada correctamente (simulado).');
+	});
 
 	const openProductForm = (row?: HTMLTableRowElement) => {
 		editingProduct = row ?? null;
@@ -244,13 +366,34 @@ import Layout from '../layouts/Layout.astro';
 		showAdminNotification(wasEditing ? 'Producto actualizado correctamente (simulado).' : 'Producto agregado correctamente (simulado).');
 	});
 
+	document.querySelector<HTMLButtonElement>('#add-promotion')?.addEventListener('click', () => openPromotionForm());
+	document.querySelectorAll<HTMLButtonElement>('#cancel-promotion, #cancel-promotion-action').forEach((button) => button.addEventListener('click', closePromotionForm));
+	promotionForm?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		const name = promotionName?.value.trim() ?? '';
+		const detail = promotionDetail?.value.trim() ?? '';
+		const code = promotionCode?.value.trim().toUpperCase() ?? '';
+		if (!promotions) return;
+		if (editingPromotionId) {
+			const promotion = promotions.find(({ id }) => id === editingPromotionId);
+			if (promotion) {
+				promotion.name = name;
+				promotion.detail = detail;
+				promotion.code = code;
+			}
+			showPromotionFeedback('Promoción actualizada (simulado).');
+		} else {
+			promotions.unshift({ id: `promotion-${Date.now()}`, name, detail, code });
+			showPromotionFeedback('Promoción agregada (simulado).');
+		}
+		localStorage.setItem('delicias-promotions', JSON.stringify(promotions));
+		renderPromotions();
+		closePromotionForm();
+	});
+	renderPromotions();
+
 	document.querySelector<HTMLButtonElement>('#place-bid')?.addEventListener('click', () => {
 		const bid = Number(auctionBid?.value ?? 0);
-		const currentPrice = Number((auctionPrice?.textContent ?? '0').replace(/[^\d]/g, ''));
-		if (!bid || bid <= currentPrice) {
-			if (auctionFeedback) auctionFeedback.textContent = `Ingresa una oferta mayor a $${currentPrice} MXN.`;
-			return;
-		}
 		if (auctionPrice) auctionPrice.textContent = `$${bid.toLocaleString('es-MX')} MXN`;
 		if (auctionBidders) auctionBidders.textContent = String(Number(auctionBidders.textContent ?? 0) + 1);
 		if (auctionFeedback) auctionFeedback.textContent = 'Oferta registrada correctamente (simulado).';
@@ -727,6 +870,17 @@ import Layout from '../layouts/Layout.astro';
 	.promotion-item strong { font-size: 0.82rem; }
 	.promotion-item small { color: var(--muted); font-size: 0.72rem; }
 	.promotion-status { padding: 5px 8px; border-radius: 999px; background: #e4f4e9; color: #47815b; font-size: 0.65rem; font-weight: 800; }
+	.promotion-actions { display: flex; gap: 6px; }
+	.promotion-action { padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: white; color: var(--primary-dark); font: inherit; font-size: 0.68rem; font-weight: 800; cursor: pointer; }
+	.promotion-action.delete { color: #a54f43; }
+	.promotion-form { display: grid; gap: 10px; margin-top: 18px; padding: 18px; border: 1px solid rgba(217, 109, 93, 0.2); border-radius: 14px; background: #fffaf7; }
+	.promotion-form[hidden] { display: none; }
+	.promotion-form-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+	.close-promotion-form { border: 0; background: transparent; color: var(--muted); font-size: 1.25rem; cursor: pointer; }
+	.promotion-form label { display: grid; gap: 6px; color: var(--muted); font-size: 0.75rem; font-weight: 800; }
+	.promotion-form input { padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--text); font: inherit; }
+	.promotion-form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+	.promotion-feedback { min-height: 18px; margin: 10px 0 0; color: #47815b; font-size: 0.75rem; font-weight: 800; }
 	.product-management { margin-top: 20px; }
 	.add-product-button { border: 0; cursor: pointer; }
 	.product-table-wrap { margin-top: 20px; }
@@ -765,6 +919,10 @@ import Layout from '../layouts/Layout.astro';
 	.auction-actions label { display: grid; flex: 1; gap: 6px; color: var(--muted); font-size: 0.75rem; font-weight: 800; }
 	.auction-actions input { padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--text); font: inherit; }
 	.auction-feedback { min-height: 18px; margin: 9px 0 0; color: var(--primary-dark); font-size: 0.78rem; font-weight: 800; }
+	.auction-edit-form { display: grid; grid-template-columns: repeat(3, 1fr) auto; align-items: end; gap: 12px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+	.auction-edit-form[hidden] { display: none; }
+	.auction-edit-form label { display: grid; gap: 6px; color: var(--muted); font-size: 0.72rem; font-weight: 800; }
+	.auction-edit-form input { width: 100%; padding: 10px 11px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--text); font: inherit; }
 
 	/* Responsive layout */
 	@media (max-width: 900px) {
@@ -798,5 +956,6 @@ import Layout from '../layouts/Layout.astro';
 		.auction-card { grid-template-columns: 1fr; }
 		.auction-stats { grid-template-columns: 1fr 1fr; }
 		.filter-row { overflow-x: auto; }
+		.auction-edit-form { grid-template-columns: 1fr; }
 	}
 </style>

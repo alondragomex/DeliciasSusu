@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main class="history-shell">
+		<header class="topbar">
+			<a class="brand-wrap" href="/Landing"><span class="brand-mark">D</span><span>Delicias Susu</span></a>
+			<nav aria-label="Navegación de cuenta"><a href="/Catalogo">Catálogo</a><a href="/Perfil">Mi perfil</a></nav>
+		</header>
+		<section class="history-content" aria-labelledby="history-title">
+			<p class="eyebrow">Tu cuenta</p>
+			<h1 id="history-title">Historial de compras</h1>
+			<p class="intro">Revisa tus pedidos, métodos de pago y facturas en un solo lugar.</p>
+			<div id="orders" class="orders"></div>
+			<div id="empty-history" class="empty-history" hidden>
+				<strong>Aún no tienes compras</strong>
+				<p>Cuando completes tu primer pedido aparecerá aquí con su ticket.</p>
+				<a class="btn btn-primary" href="/Catalogo">Explorar catálogo</a>
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	type Order = { orderNumber?: string; total?: string; payment?: string; delivery?: string; createdAt?: string; name?: string };
+	const orders = JSON.parse(localStorage.getItem('delicias-orders') ?? '[]') as Order[];
+	const container = document.querySelector<HTMLElement>('#orders');
+	const empty = document.querySelector<HTMLElement>('#empty-history');
+	const formatDate = (value?: string) => value ? new Date(value).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Fecha pendiente';
+	if (!orders.length) {
+		if (empty) empty.hidden = false;
+	} else {
+		orders.forEach((order) => {
+			const card = document.createElement('article');
+			card.className = 'order-card';
+			card.innerHTML = `<div><span class="order-status">Confirmado</span><h2></h2><p></p></div><div class="order-meta"><strong></strong><span></span><a class="invoice-link" href="/Factura?pedido=">Ver factura →</a></div>`;
+			card.querySelector('h2')!.textContent = order.orderNumber ?? 'Pedido Delicias Susu';
+			card.querySelector('p')!.textContent = `${formatDate(order.createdAt)} · ${order.payment ?? 'Pago simulado'}`;
+			card.querySelector('strong')!.textContent = order.total ?? '$0 MXN';
+			card.querySelector('.order-meta span')!.textContent = order.delivery ?? 'Entrega por confirmar';
+			const link = card.querySelector<HTMLAnchorElement>('.invoice-link');
+			if (link) link.href = `/Factura?pedido=${encodeURIComponent(order.orderNumber ?? '')}`;
+			container?.append(card);
+		});
+	}
+</script>
+
+<style>
+	.history-shell { max-width: 1000px; min-height: 100vh; margin: 0 auto; padding: 24px 20px 56px; }
+	.topbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+	.brand-wrap, nav { display: flex; align-items: center; gap: 24px; color: var(--text); font-weight: 800; }
+	nav a { color: var(--primary-dark); font-size: .9rem; }
+	.brand-mark { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; background: linear-gradient(135deg, var(--primary), #eea368); color: white; }
+	.history-content { max-width: 760px; margin: 12vh auto 0; }
+	.eyebrow { margin: 0 0 12px; color: var(--primary-dark); font-size: .8rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+	h1 { margin: 0; font-size: clamp(2.4rem, 6vw, 4.5rem); letter-spacing: -.05em; }
+	.intro { margin: 18px 0 32px; color: var(--muted); line-height: 1.6; }
+	.orders { display: grid; gap: 14px; }
+	.order-card { display: flex; justify-content: space-between; gap: 20px; padding: 22px; border: 1px solid rgba(217,109,93,.14); border-radius: 20px; background: rgba(255,255,255,.82); box-shadow: var(--shadow); }
+	.order-status { color: var(--primary-dark); font-size: .75rem; font-weight: 800; text-transform: uppercase; }
+	.order-card h2 { margin: 8px 0 6px; font-size: 1.15rem; }
+	.order-card p, .order-meta span { margin: 0; color: var(--muted); font-size: .88rem; }
+	.order-meta { display: grid; justify-items: end; gap: 7px; text-align: right; }
+	.order-meta strong { font-size: 1.15rem; }
+	.invoice-link { color: var(--primary-dark); font-weight: 800; font-size: .86rem; }
+	.empty-history { padding: 38px; border-radius: 20px; background: #fff0df; text-align: center; }
+	.empty-history p { color: var(--muted); }
+	.btn { display: inline-block; padding: 12px 18px; border-radius: 999px; background: var(--primary); color: white; font-weight: 800; }
+	@media (max-width: 600px) { .order-card { flex-direction: column; } .order-meta { justify-items: start; text-align: left; } }
+</style>

@@ -70,18 +70,12 @@ import Layout from '../layouts/Layout.astro';
 	const form = document.querySelector<HTMLFormElement>('#promo-form');
 	const codeInput = document.querySelector<HTMLInputElement>('#promo-code');
 	const feedback = document.querySelector<HTMLElement>('#promo-feedback');
-	const validCodes = new Set(['SUSU10', 'DULCE10']);
-
 	const applyCode = (code: string) => {
 		const normalizedCode = code.trim().toUpperCase();
 		if (!feedback) return;
-		if (validCodes.has(normalizedCode)) {
-			feedback.textContent = `Descuento aplicado (simulado) · Código ${normalizedCode}`;
-			feedback.className = 'promo-feedback success';
-			return;
-		}
-		feedback.textContent = 'Código no disponible. Prueba con SUSU10.';
-		feedback.className = 'promo-feedback error';
+		localStorage.setItem('delicias-promo-code', normalizedCode);
+		feedback.textContent = `Descuento aplicado (simulado) · Código ${normalizedCode}`;
+		feedback.className = 'promo-feedback success';
 	};
 
 	form?.addEventListener('submit', (event) => {
