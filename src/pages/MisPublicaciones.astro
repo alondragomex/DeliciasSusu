@@ -102,9 +102,10 @@ import Layout from '../layouts/Layout.astro';
 			editButton.type = 'button';
 			editButton.textContent = 'Editar';
 			editButton.addEventListener('click', () => {
-				const updatedName = window.prompt('Nuevo nombre del producto', product.name)?.trim();
-				if (!updatedName) return;
-				product.name = updatedName;
+				product.name = window.prompt('Nuevo nombre del producto', product.name) ?? product.name;
+				product.category = window.prompt('Nueva categoría', product.category) ?? product.category;
+				product.price = Number(window.prompt('Nuevo precio', String(product.price)) ?? product.price);
+				product.description = window.prompt('Nueva descripción', product.description) ?? product.description;
 				localStorage.setItem('delicias-publications', JSON.stringify(publications));
 				renderPublications();
 				if (feedback) feedback.textContent = 'Publicación actualizada (simulado).';

@@ -53,6 +53,7 @@ import Layout from '../layouts/Layout.astro';
 						<span class="price">$500.00MXN</span>
 						<span class="mini-note">Entrega en 24h</span>
 					</div>
+					<a class="product-order-btn" href="/Catalogo">Comprar ahora <span aria-hidden="true">→</span></a>
 				</div>
 				<div class="mini-card mini-one">
 					🍪 Cupcakes
@@ -143,6 +144,15 @@ import Layout from '../layouts/Layout.astro';
 			</div>
 		</section>
 
+		<section class="home-promotion" aria-labelledby="home-promotion-title">
+			<div>
+				<p class="eyebrow">Promoción de la semana</p>
+				<h2 id="home-promotion-title">10% de descuento en tu primer pedido</h2>
+				<p>Usa el cupón <strong>SUSU10</strong> y disfruta un detalle dulce para compartir.</p>
+			</div>
+			<a class="btn btn-primary" href="/Catalogo?promo=SUSU10">Comprar ahora <span aria-hidden="true">→</span></a>
+		</section>
+
 		<section class="process" id="opiniones">
 			<div class="section-heading">
 				<p class="eyebrow">Cómo funciona</p>
@@ -170,12 +180,27 @@ import Layout from '../layouts/Layout.astro';
 
 		<section class="testimonial">
 			<div class="testimonial-box">
+				<p class="eyebrow">Reseñas de clientes</p>
+				<div class="stars" aria-label="5 de 5 estrellas">★★★★★</div>
 				<p class="quote">“Pedimos un pastel para la fiesta de mi hermana y quedó espectacular. ¡Todo el mundo pregunto donde lo compraron!”</p>
 				<div class="person">
 					<strong>María R.</strong>
-					<span>Cliente feliz</span>
+					<span>Cliente feliz · 5.0</span>
 				</div>
 			</div>
+		</section>
+
+		<section class="home-community" aria-labelledby="home-community-title">
+			<div class="section-heading">
+				<p class="eyebrow">Comunidad</p>
+				<h2 id="home-community-title">Momentos dulces que ya compartieron</h2>
+			</div>
+			<div class="community-preview-grid">
+				<article><div class="stars" aria-label="5 de 5 estrellas">★★★★★</div><p>“La presentación estuvo preciosa y llegó justo a tiempo.”</p><strong>Daniela G.</strong></article>
+				<article><div class="stars" aria-label="5 de 5 estrellas">★★★★★</div><p>“Los cupcakes fueron el detalle favorito de todos.”</p><strong>Jorge M.</strong></article>
+				<article><div class="stars" aria-label="4 de 5 estrellas">★★★★☆</div><p>“Sabor casero, atención cercana y mucha calidad.”</p><strong>Ana P.</strong></article>
+			</div>
+			<a class="btn btn-secondary community-home-link" href="/Comunidad">Ver comunidad y reseñas <span aria-hidden="true">→</span></a>
 		</section>
 
 		<section class="cta" id="contacto">
@@ -200,7 +225,7 @@ import Layout from '../layouts/Layout.astro';
 					<input id="contact-name" name="name" type="text" placeholder="Tu nombre" />
 
 					<label for="contact-email">Correo</label>
-					<input id="contact-email" name="email" type="email" placeholder="tu@correo.com" />
+					<input id="contact-email" name="email" type="text" placeholder="tu@correo.com" />
 
 					<label for="contact-message">Mensaje</label>
 					<textarea id="contact-message" name="message" rows="4" placeholder="Cuéntanos qué quieres pedir..."></textarea>
@@ -218,8 +243,8 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <script>
-	const contactForm = document.querySelector('#contact-form');
-	const contactSuccess = document.querySelector('#form-success');
+	const contactForm = document.querySelector<HTMLFormElement>('#contact-form');
+	const contactSuccess = document.querySelector<HTMLElement>('#form-success');
 
 	contactForm?.addEventListener('submit', (event) => {
 		event.preventDefault();
@@ -598,6 +623,33 @@ import Layout from '../layouts/Layout.astro';
 		margin-top: 30px;
 	}
 
+	.home-promotion {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		margin-top: 70px;
+		padding: 28px 32px;
+		border-radius: 22px;
+		background: linear-gradient(120deg, #fff0df, #fce4de);
+		box-shadow: var(--shadow);
+	}
+
+	.home-promotion h2 {
+		margin: 0 0 8px;
+		font-size: clamp(1.5rem, 3vw, 2.3rem);
+	}
+
+	.home-promotion p:last-child {
+		margin: 0;
+		color: var(--muted);
+	}
+
+	.home-promotion strong,
+	.stars {
+		color: var(--primary-dark);
+	}
+
 	.steps {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
@@ -622,6 +674,41 @@ import Layout from '../layouts/Layout.astro';
 		padding: 32px 28px;
 		max-width: 760px;
 		margin: 0 auto;
+	}
+
+	.stars {
+		margin: 0 0 12px;
+		letter-spacing: 0.12em;
+		font-size: 1.05rem;
+	}
+
+	.home-community {
+		padding: 12px 0 70px;
+	}
+
+	.community-preview-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 16px;
+		margin-top: 28px;
+	}
+
+	.community-preview-grid article {
+		padding: 22px;
+		border: 1px solid var(--line);
+		border-radius: 18px;
+		background: rgba(255, 255, 255, 0.76);
+	}
+
+	.community-preview-grid p {
+		min-height: 48px;
+		margin: 0 0 16px;
+		color: var(--muted);
+		line-height: 1.55;
+	}
+
+	.community-home-link {
+		margin-top: 22px;
 	}
 
 	.quote {
@@ -737,7 +824,8 @@ import Layout from '../layouts/Layout.astro';
 		.hero,
 		.feature-grid,
 		.product-grid,
-		.steps {
+		.steps,
+		.community-preview-grid {
 			grid-template-columns: 1fr;
 			flex-direction: column;
 		}
@@ -768,6 +856,11 @@ import Layout from '../layouts/Layout.astro';
 
 		.contact-panel {
 			grid-template-columns: 1fr;
+		}
+
+		.home-promotion {
+			align-items: flex-start;
+			flex-direction: column;
 		}
 	}
 </style>

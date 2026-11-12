@@ -112,6 +112,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			<nav class="nav" aria-label="Navegación principal">
 				<a href="/Landing">Inicio</a>
 				<a class="active" href="/Catalogo" aria-current="page">Catálogo</a>
+				<a href="/Promociones">Promociones</a>
 				<a href="/Landing#beneficios">Nosotros</a>
 				<a href="/Landing#contacto">Contacto</a>
 			</nav>
@@ -183,7 +184,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 				<div class="cart-heading"><div><p class="eyebrow">Tu selección</p><h2 id="cart-title">Carrito</h2></div><button class="close-modal" type="button" aria-label="Cerrar carrito" data-close-cart>×</button></div>
 				<div class="cart-items" id="cart-items"></div>
 				<div class="cart-empty" id="cart-empty">Todavía no agregas productos.</div>
-				<div class="cart-summary"><div><span>Subtotal</span><strong id="cart-subtotal">$0 MXN</strong></div><div><span>Total</span><strong id="cart-total-price">$0 MXN</strong></div><button class="checkout-button" id="checkout-button" type="button">Ir a pagar <span aria-hidden="true">→</span></button><p class="checkout-feedback" id="checkout-feedback" role="status" aria-live="polite"></p></div>
+				<div class="cart-summary"><div><span>Subtotal</span><strong id="cart-subtotal">$0 MXN</strong></div><div id="cart-discount-row" hidden><span id="cart-discount-label">Descuento</span><strong id="cart-discount">-$0 MXN</strong></div><div><span>Total</span><strong id="cart-total-price">$0 MXN</strong></div><p class="applied-promo" id="applied-promo" hidden>Descuento aplicado (simulado)</p><button class="checkout-button" id="checkout-button" type="button">Ir a pagar <span aria-hidden="true">→</span></button><p class="checkout-feedback" id="checkout-feedback" role="status" aria-live="polite"></p></div>
 			</aside>
 		</div>
 
@@ -191,14 +192,14 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 			<div class="modal-backdrop" data-close-checkout></div>
 			<section class="checkout-panel" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
 				<div class="checkout-heading">
-					<div><p class="eyebrow">Compra simulada</p><h2 id="checkout-title">Completa tu pedido</h2></div>
+					<div><p class="eyebrow">Compra</p><h2 id="checkout-title">Completa tu pedido</h2></div>
 					<button class="close-modal" type="button" aria-label="Cerrar checkout" data-close-checkout>×</button>
 				</div>
 				<form class="checkout-form" id="checkout-form" novalidate>
 					<div class="checkout-fields">
-						<label>Nombre completo<input id="checkout-name" name="name" type="text" autocomplete="name" required /></label>
-						<label>Correo electrónico<input id="checkout-email" name="email" type="email" autocomplete="email" required /></label>
-						<label class="full-field">Dirección de entrega<input id="checkout-address" name="address" type="text" autocomplete="street-address" required /></label>
+						<label>Nombre completo<input id="checkout-name" name="name" type="text" autocomplete="name" /></label>
+						<label>Correo electrónico<input id="checkout-email" name="email" type="text" autocomplete="email" /></label>
+						<label class="full-field">Dirección de entrega<input id="checkout-address" name="address" type="text" autocomplete="street-address" /></label>
 						<fieldset class="payment-field">
 							<legend>Método de pago</legend>
 							<div class="payment-options">
@@ -228,7 +229,10 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 					</div>
 					<button class="receipt-button" id="print-receipt" type="button">Imprimir ticket (simulado)</button>
 					<p class="receipt-feedback" id="receipt-feedback" role="status" aria-live="polite"></p>
-					<a class="btn btn-primary" href="/Perfil">Ver mi perfil</a>
+					<div class="confirmation-actions">
+						<a class="btn btn-primary" href="/Factura">Ver factura</a>
+						<a class="btn btn-secondary" href="/Historial">Ver historial</a>
+					</div>
 				</div>
 			</section>
 		</div>
@@ -245,7 +249,6 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 <script>
 	const search = document.querySelector<HTMLInputElement>('#product-search');
 	const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filters [data-category]');
-	const productCards = document.querySelectorAll<HTMLElement>('.product-card');
 	const emptyState = document.querySelector<HTMLElement>('#empty-state');
 	const resultCount = document.querySelector<HTMLElement>('#result-count');
 	const modal = document.querySelector<HTMLElement>('#product-modal');
@@ -263,10 +266,15 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	const relatedGrid = document.querySelector<HTMLElement>('#related-grid');
 	const cartFeedback = document.querySelector<HTMLElement>('#cart-feedback');
 	const cartModal = document.querySelector<HTMLElement>('#cart-modal');
+	const productGrid = document.querySelector<HTMLElement>('#product-grid');
 	const cartItemsElement = document.querySelector<HTMLElement>('#cart-items');
 	const cartEmpty = document.querySelector<HTMLElement>('#cart-empty');
 	const cartSubtotal = document.querySelector<HTMLElement>('#cart-subtotal');
+	const cartDiscountRow = document.querySelector<HTMLElement>('#cart-discount-row');
+	const cartDiscountLabel = document.querySelector<HTMLElement>('#cart-discount-label');
+	const cartDiscount = document.querySelector<HTMLElement>('#cart-discount');
 	const cartTotalPrice = document.querySelector<HTMLElement>('#cart-total-price');
+	const appliedPromo = document.querySelector<HTMLElement>('#applied-promo');
 	const checkoutFeedback = document.querySelector<HTMLElement>('#checkout-feedback');
 	const checkoutModal = document.querySelector<HTMLElement>('#checkout-modal');
 	const checkoutForm = document.querySelector<HTMLFormElement>('#checkout-form');
@@ -280,11 +288,65 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	const receiptTotal = document.querySelector<HTMLElement>('#receipt-total');
 	const receiptFeedback = document.querySelector<HTMLElement>('#receipt-feedback');
 	const paymentOptions = document.querySelectorAll<HTMLElement>('.payment-option');
+
+	type PublishedProduct = {
+		id: string;
+		name: string;
+		price: number;
+		category: string;
+		description: string;
+		photoName: string;
+		createdAt: string;
+	};
+
+	const publishedProducts = JSON.parse(localStorage.getItem('delicias-publications') ?? '[]') as PublishedProduct[];
+	publishedProducts.forEach((product) => {
+		const card = document.createElement('article');
+		card.className = 'product-card';
+		card.dataset.category = product.category;
+		card.dataset.offer = 'false';
+		card.dataset.name = product.name.toLowerCase();
+		card.dataset.product = product.name;
+		card.dataset.description = product.description;
+		card.dataset.price = `$${product.price}`;
+		card.dataset.originalPrice = `$${product.price}`;
+		card.dataset.icon = '🍰';
+		card.dataset.class = 'community-product';
+		card.dataset.availability = 'Publicado por la comunidad';
+		card.innerHTML = `
+			<div class="product-art community-product">
+				<span class="product-badge community-badge">De otra persona</span>
+				<span class="dessert-icon" aria-hidden="true">🍰</span>
+			</div>
+			<div class="product-info">
+				<div class="category-label">Publicación de la comunidad</div>
+				<h3></h3>
+				<div class="product-footer"><div><strong>$${product.price}</strong><small>MXN</small></div><span class="availability">Publicado por la comunidad</span></div>
+				<button class="order-button" type="button" data-detail-button>Ver detalle <span aria-hidden="true">→</span></button>
+			</div>
+		`;
+		const title = card.querySelector('h3');
+		const category = card.querySelector('.category-label');
+		const description = document.createElement('p');
+		if (title) title.textContent = product.name;
+		if (category) category.textContent = `Publicación de la comunidad · ${product.category}`;
+		description.textContent = product.description;
+		card.querySelector('.product-footer')?.before(description);
+		productGrid?.append(card);
+	});
+	const productCards = document.querySelectorAll<HTMLElement>('.product-card');
+
 	type CartItem = { name: string; price: number; originalPrice: number; isOffer: boolean; icon: string; quantity: number };
 	let selectedCategory = 'Todos';
 	let selectedProduct: HTMLElement | null = null;
 	let cartItems: Record<string, CartItem> = JSON.parse(localStorage.getItem('delicias-cart-items') ?? '{}');
+	let appliedPromoCode = localStorage.getItem('delicias-promo-code') ?? '';
 	let cartTotal = 0;
+	const promoFromUrl = new URLSearchParams(window.location.search).get('promo')?.toUpperCase();
+	if (promoFromUrl) {
+		appliedPromoCode = promoFromUrl;
+		localStorage.setItem('delicias-promo-code', appliedPromoCode);
+	}
 
 	const formatPrice = (price: number) => `$${price.toLocaleString('es-MX')} MXN`;
 	const saveCart = () => localStorage.setItem('delicias-cart-items', JSON.stringify(cartItems));
@@ -302,9 +364,15 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		if (cartCount) cartCount.textContent = String(cartTotal);
 		cartButton?.setAttribute('aria-label', `Carrito, ${cartTotal} productos`);
 		const subtotal = Object.values(cartItems).reduce((total, item) => total + (item.originalPrice ?? item.price) * item.quantity, 0);
-		const total = Object.values(cartItems).reduce((sum, item) => sum + item.price * item.quantity, 0);
+		const productsTotal = Object.values(cartItems).reduce((sum, item) => sum + item.price * item.quantity, 0);
+		const discount = appliedPromoCode ? Math.round(productsTotal * 0.1) : 0;
+		const total = productsTotal - discount;
 		if (cartSubtotal) cartSubtotal.textContent = formatPrice(subtotal);
+		if (cartDiscountRow) cartDiscountRow.hidden = discount === 0;
+		if (cartDiscountLabel) cartDiscountLabel.textContent = `Descuento ${appliedPromoCode}`;
+		if (cartDiscount) cartDiscount.textContent = `-${formatPrice(discount)}`;
 		if (cartTotalPrice) cartTotalPrice.textContent = formatPrice(total);
+		if (appliedPromo) appliedPromo.hidden = discount === 0;
 		if (cartEmpty) cartEmpty.hidden = cartTotal !== 0;
 	};
 
@@ -411,10 +479,6 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	document.querySelectorAll<HTMLElement>('[data-close-cart]').forEach((element) => element.addEventListener('click', () => { if (cartModal) cartModal.hidden = true; document.body.style.overflow = ''; }));
 	document.querySelectorAll<HTMLElement>('[data-close-checkout]').forEach((element) => element.addEventListener('click', closeCheckout));
 	document.querySelector<HTMLButtonElement>('#checkout-button')?.addEventListener('click', () => {
-		if (cartTotal === 0) {
-			if (checkoutFeedback) checkoutFeedback.textContent = 'Agrega al menos un producto para continuar.';
-			return;
-		}
 		if (cartModal) cartModal.hidden = true;
 		if (checkoutModal) checkoutModal.hidden = false;
 		if (checkoutTotal) checkoutTotal.textContent = cartTotalPrice?.textContent ?? '$0 MXN';
@@ -428,12 +492,20 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		const address = String(form.get('address') ?? '').trim();
 		const payment = String(form.get('payment') ?? '').trim();
 		const delivery = String(form.get('delivery') ?? '').trim();
-		if (!name || !email || !address || !email.includes('@') || !payment) {
-			if (checkoutError) checkoutError.textContent = 'Completa tus datos y selecciona un método de pago para continuar.';
+		if (cartTotal === 0) {
+			if (checkoutError) checkoutError.textContent = 'Agrega al menos un producto antes de confirmar tu pedido.';
+			return;
+		}
+		if (!name || !email || !address || !payment || !email.includes('@')) {
+			if (checkoutError) checkoutError.textContent = 'Completa nombre, correo válido, dirección y método de pago para continuar.';
 			return;
 		}
 		const orderNumber = `DS-${Date.now().toString().slice(-6)}`;
-		localStorage.setItem('delicias-last-order', JSON.stringify({ orderNumber, name, email, address, total: checkoutTotal?.textContent ?? '$0 MXN', createdAt: new Date().toISOString() }));
+		const order = { orderNumber, name, email, address, payment, delivery, total: checkoutTotal?.textContent ?? '$0 MXN', items: Object.values(cartItems), createdAt: new Date().toISOString() };
+		const orders = JSON.parse(localStorage.getItem('delicias-orders') ?? '[]') as unknown[];
+		orders.unshift(order);
+		localStorage.setItem('delicias-orders', JSON.stringify(orders));
+		localStorage.setItem('delicias-last-order', JSON.stringify(order));
 		cartItems = {};
 		saveCart();
 		renderCart();
@@ -455,6 +527,7 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 		if (checkoutError) checkoutError.textContent = `Método seleccionado: ${option.querySelector('strong')?.textContent ?? 'Pago'}.`;
 	}));
 	renderCart();
+	updateProducts();
 </script>
 
 <style>
@@ -497,7 +570,9 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.product-art.berries { background: #bd6c7e; }
 	.product-art.brownie { background: #8d5b43; }
 	.product-art.gift { background: #75a49a; }
+	.product-art.community-product { background: linear-gradient(135deg, #8b6ca8, #c18caa); }
 	.product-badge { position: absolute; top: 16px; left: 16px; z-index: 1; padding: 6px 9px; border-radius: 999px; background: rgba(255, 255, 255, 0.88); color: var(--text); font-size: 0.72rem; font-weight: 800; }
+	.community-badge { background: #fff3d6; color: #855b20; }
 	.product-badge-right { right: 16px; left: auto; }
 	.dessert-icon { position: relative; z-index: 1; font-size: 5.8rem; filter: drop-shadow(0 12px 7px rgba(66, 31, 22, 0.22)); }
 	.product-info { padding: 19px 20px 20px; }
@@ -559,7 +634,11 @@ const categories = ['Todos', 'Pasteles', 'Tartas', 'Cupcakes', 'Regalos'];
 	.cart-summary { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); }
 	.cart-summary > div { display: flex; justify-content: space-between; gap: 16px; margin: 8px 0; }
 	.cart-summary span { color: var(--muted); }
+	.applied-promo { margin: 12px 0 0; color: #28734e; font-size: 0.8rem; font-weight: 700; text-align: center; }
+	.applied-promo[hidden] { display: none; }
 	.checkout-button { width: 100%; margin-top: 15px; padding: 13px; border: 0; border-radius: 11px; background: var(--primary); color: white; cursor: pointer; font: inherit; font-weight: 800; }
+	.confirmation-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+	.confirmation-actions .btn { flex: 1; min-width: 150px; text-align: center; }
 	.checkout-feedback { min-height: 20px; margin: 10px 0 0; color: var(--primary-dark); font-size: 0.85rem; font-weight: 700; text-align: center; }
 	.checkout-modal[hidden] { display: none; }
 	.checkout-modal { position: fixed; inset: 0; z-index: 12; display: grid; place-items: center; padding: 20px; }

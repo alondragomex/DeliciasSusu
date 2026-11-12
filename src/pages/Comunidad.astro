@@ -2,9 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 
 const initialComments = [
-	{ name: 'María R.', date: 'Hace 2 días', text: 'El pastel de chocolate fue el protagonista de nuestra celebración. ¡Delicioso!' },
-	{ name: 'Daniela G.', date: 'Hace 4 días', text: 'Me encantó la presentación y la atención. Todo llegó perfecto.' },
-	{ name: 'Jorge M.', date: 'Hace 1 semana', text: 'Los cupcakes surtidos son ideales para compartir en familia.' },
+	{ name: 'María R.', date: 'Hace 2 días', text: 'El pastel de chocolate fue el protagonista de nuestra celebración. ¡Delicioso!', rating: 5 },
+	{ name: 'Daniela G.', date: 'Hace 4 días', text: 'Me encantó la presentación y la atención. Todo llegó perfecto.', rating: 5 },
+	{ name: 'Jorge M.', date: 'Hace 1 semana', text: 'Los cupcakes surtidos son ideales para compartir en familia.', rating: 4 },
 ];
 ---
 
@@ -42,6 +42,7 @@ const initialComments = [
 							<div class="comment-avatar" aria-hidden="true">{comment.name.slice(0, 1)}</div>
 							<div>
 								<div class="comment-meta"><strong>{comment.name}</strong><span>{comment.date}</span></div>
+								<div class="comment-stars" aria-label={`${comment.rating} de 5 estrellas`}>{'★'.repeat(comment.rating)}{'☆'.repeat(5 - comment.rating)}</div>
 								<p>{comment.text}</p>
 							</div>
 						</article>
@@ -55,9 +56,11 @@ const initialComments = [
 				<p>Cuéntanos qué producto disfrutaste o qué momento celebraste con nosotros.</p>
 				<form id="comment-form">
 					<label for="comment-name">Tu nombre</label>
-					<input id="comment-name" name="name" type="text" placeholder="Ej. Ana L." required />
+					<input id="comment-name" name="name" type="text" placeholder="Ej. Ana L." />
 					<label for="comment-text">Comentario</label>
-					<textarea id="comment-text" name="comment" rows="5" placeholder="Escribe tu experiencia..." required></textarea>
+					<textarea id="comment-text" name="comment" rows="5" placeholder="Escribe tu experiencia..."></textarea>
+					<label for="comment-rating">Calificación</label>
+					<select id="comment-rating" name="rating"><option value="5">★★★★★ · Excelente</option><option value="4">★★★★☆ · Muy buena</option><option value="3">★★★☆☆ · Buena</option></select>
 					<button class="btn btn-primary" type="submit">Publicar comentario <span aria-hidden="true">→</span></button>
 					<p class="form-feedback" id="comment-feedback" role="status" aria-live="polite"></p>
 				</form>
@@ -70,6 +73,7 @@ const initialComments = [
 	const form = document.querySelector<HTMLFormElement>('#comment-form');
 	const nameInput = document.querySelector<HTMLInputElement>('#comment-name');
 	const textInput = document.querySelector<HTMLTextAreaElement>('#comment-text');
+	const ratingInput = document.querySelector<HTMLSelectElement>('#comment-rating');
 	const commentsList = document.querySelector<HTMLElement>('#comments-list');
 	const feedback = document.querySelector<HTMLElement>('#comment-feedback');
 
@@ -77,7 +81,8 @@ const initialComments = [
 		event.preventDefault();
 		const name = nameInput?.value.trim() ?? '';
 		const text = textInput?.value.trim() ?? '';
-		if (!name || !text || !commentsList || !feedback) return;
+		const rating = Number(ratingInput?.value ?? 5);
+		if (!commentsList || !feedback) return;
 
 		const article = document.createElement('article');
 		article.className = 'comment-card new-comment';
@@ -95,7 +100,11 @@ const initialComments = [
 		meta.append(author, date);
 		const comment = document.createElement('p');
 		comment.textContent = text;
-		content.append(meta, comment);
+		const stars = document.createElement('div');
+		stars.className = 'comment-stars';
+		stars.setAttribute('aria-label', `${rating} de 5 estrellas`);
+		stars.textContent = `${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}`;
+		content.append(meta, stars, comment);
 		article.append(avatar, content);
 		commentsList.prepend(article);
 		form.reset();
@@ -254,9 +263,26 @@ const initialComments = [
 		font-size: 0.8rem;
 	}
 
+	.comment-stars {
+		margin-top: 8px;
+		color: var(--primary-dark);
+		letter-spacing: 0.08em;
+		font-size: 0.85rem;
+	}
+
 	.comment-card p {
 		margin: 8px 0 0;
 		font-size: 0.92rem;
+	}
+
+	.comment-form-card select {
+		width: 100%;
+		padding: 11px 12px;
+		border: 1px solid var(--line);
+		border-radius: 10px;
+		background: #fff;
+		color: var(--text);
+		font: inherit;
 	}
 
 	.new-comment {

@@ -29,8 +29,8 @@ import Layout from '../layouts/Layout.astro';
 				<div class="product-art" aria-hidden="true">🎂</div>
 				<div class="product-content">
 					<p class="category-label">Producto en subasta</p>
-					<h2>Pastel artesanal de frutos rojos</h2>
-					<p>Pastel de vainilla, crema ligera y frutos rojos frescos. Una pieza especial preparada para celebrar.</p>
+					<h2 id="auction-title-display">Pastel artesanal de frutos rojos</h2>
+					<p id="auction-description-display">Pastel de vainilla, crema ligera y frutos rojos frescos. Una pieza especial preparada para celebrar.</p>
 					<div class="product-details">
 						<span><strong>8</strong> participantes</span>
 						<span><strong>24 cm</strong> de tamaño</span>
@@ -49,10 +49,9 @@ import Layout from '../layouts/Layout.astro';
 					<label for="bid-amount">Haz tu oferta</label>
 					<div class="bid-input">
 						<span>$</span>
-						<input id="bid-amount" type="number" min="381" step="1" placeholder="Ej. 400" required />
+						<input id="bid-amount" type="text" placeholder="Ej. 400" />
 						<span>MXN</span>
 					</div>
-					<p class="minimum-bid">La oferta mínima es de $381 MXN.</p>
 					<button class="btn btn-primary" type="submit">Ofertar ahora <span aria-hidden="true">→</span></button>
 					<p class="bid-feedback" id="bid-feedback" role="status" aria-live="polite"></p>
 				</form>
@@ -81,35 +80,49 @@ import Layout from '../layouts/Layout.astro';
 	const currentBid = document.querySelector<HTMLElement>('#current-bid');
 	const feedback = document.querySelector<HTMLElement>('#bid-feedback');
 	const offersList = document.querySelector<HTMLElement>('#offers-list');
-	let remainingSeconds = 299;
-
+	const auctionTitleDisplay = document.querySelector<HTMLElement>('#auction-title-display');
+	const auctionDescriptionDisplay = document.querySelector<HTMLElement>('#auction-description-display');
+	const auctionState = JSON.parse(localStorage.getItem('delicias-auction') ?? 'null') as { title?: string; description?: string; price?: number; bidders?: number } | null;
+	if (auctionState?.title && auctionTitleDisplay) auctionTitleDisplay.textContent = auctionState.title;
+	if (auctionState?.description && auctionDescriptionDisplay) auctionDescriptionDisplay.textContent = auctionState.description;
+	if (auctionState?.price && currentBid) {
+		currentBid.dataset.amount = String(auctionState.price);
+		currentBid.innerHTML = `$${auctionState.price.toLocaleString('es-MX')} <small>MXN</small>`;
+	}
+	const auctionEndKey = 'delicias-auction-end';
+	const storedEnd = Number(localStorage.getItem(auctionEndKey) ?? 0);
+	const auctionEnd = storedEnd > Date.now() ? storedEnd : Date.now() + 5 * 60 * 1000;
+	localStorage.setItem(auctionEndKey, String(auctionEnd));
+	let remainingSeconds = Math.max(0, Math.ceil((auctionEnd - Date.now()) / 1000));
 	const renderTimer = () => {
 		if (!timer) return;
+		if (remainingSeconds <= 0) {
+			timer.textContent = '00:00';
+			if (feedback) {
+				feedback.textContent = 'La subasta ha terminado.';
+				feedback.className = 'bid-feedback error';
+			}
+			return;
+		}
 		const minutes = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
 		const seconds = (remainingSeconds % 60).toString().padStart(2, '0');
 		timer.textContent = `${minutes}:${seconds}`;
 	};
 
 	const timerInterval = window.setInterval(() => {
+		remainingSeconds = Math.max(0, Math.ceil((auctionEnd - Date.now()) / 1000));
 		if (remainingSeconds <= 0) {
 			window.clearInterval(timerInterval);
-			if (timer) timer.textContent = '00:00';
+			renderTimer();
 			return;
 		}
-		remainingSeconds -= 1;
 		renderTimer();
 	}, 1000);
 
 	bidForm?.addEventListener('submit', (event) => {
 		event.preventDefault();
 		const amount = Number(bidInput?.value ?? 0);
-		const minimum = Number(currentBid?.dataset.amount ?? 380) + 1;
 		if (!feedback || !currentBid) return;
-		if (amount < minimum) {
-			feedback.textContent = `La oferta debe ser de al menos $${minimum} MXN.`;
-			feedback.className = 'bid-feedback error';
-			return;
-		}
 		currentBid.dataset.amount = String(amount);
 		currentBid.replaceChildren(document.createTextNode(`$${amount} `));
 		const currency = document.createElement('small');
@@ -405,6 +418,11 @@ import Layout from '../layouts/Layout.astro';
 		color: white;
 	}
 
+	.btn:disabled {
+		cursor: not-allowed;
+		opacity: 0.55;
+	}
+
 	.bid-feedback {
 		min-height: 24px;
 		margin: 4px 0 0;
@@ -418,6 +436,11 @@ import Layout from '../layouts/Layout.astro';
 
 	.bid-feedback.error {
 		color: var(--primary-dark);
+	}
+
+	.bid-panel .btn:disabled {
+		cursor: not-allowed;
+		opacity: 0.55;
 	}
 
 	.offers-section {
